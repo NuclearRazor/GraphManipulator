@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<!--js exterior libraries-->
+<script src="static/js/ajax-libs/ajax_libs_d3.js"></script>
+<script src="static/js/d3/dagre-d3.js"></script>
+<script src="static/js/graphlib-dot/graphlib-dot.js"></script>
+<script src="static/js/wsclient.js"></script>
+<script src="static/js/wsclient.js"></script>
+
+<!--styles exterior libraries-->
+<link rel="stylesheet" href="static/css/style.css">
+<link rel="stylesheet" href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy"  content="connect-src * 'unsafe-inline';">
+    </head>
+    <body>
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3" align="center">
+                    <table class="table">
+                        <h2>GRAPH MANIPULATOR</h2>
+                    <tr>
+                        <td style="font-weight: bold;">VERTEX NAME LENGTH</td>
+                        <td><input type="text" id="matrix_dim" class="form-control"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">NODES COUNT</td>
+                        <td><input type="text" id="nodes_dim" class="form-control"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">EDGES WEIGHT COUNT</td>
+                        <td><input type="text" id="metrics_dim" class="form-control"/></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input style="font-weight: bold;" id="btnDisconnect" type="button" value="DISCONNECT" class="btn btn-indigo btn-sm m-0" onclick="onDisconnectClick()" disabled="disabled">
+                            &nbsp;
+                            <input style="font-weight: bold;" id="btnOptions" type="button" value="OPTIONS" class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onOptionsclick()">
+                            <div class="options_panel">
+                                <table class="options_table">
+                                    <tr>
+                                        <td style="font-weight: bold;">PORT</td>
+                                        <td><input type="text" id="port" class="form-control"/></td>
+                                        <td><input style="font-weight: bold;" id="btnApplyPort" type="button" value="APPLY" onclick="onApplyPortClick()" class="btn btn-indigo btn-sm m-0 btn-primary"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        <td>
+                        <input style="font-weight: bold;" id="btnConnect"    type="button" value="CONNECT"   class="btn btn-indigo btn-sm m-0" onclick="onConnectClick()">
+                        &nbsp;
+                        <input style="font-weight: bold;" id="btnPlot" type="button" value="PLOT" disabled="disabled" class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onPlotClick(document.getElementsByTagName('textarea')[0])">
+                        </td>
+                    </tr>
+                    </table>
+                    <table>
+                    <tr>
+                        <textarea id="incomingMsgOutput" rows="10" cols="10" class="form-control"></textarea>
+                    </tr>
+                    </table>
+                </div>
+                <div class="col-md-7"  align="center">
+                    <h2>GRAPH PLOT</h2>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <script type='text/javascript'>
+                    </script>
+                    <svg id="graphContainer">
+                        <g></g>
+                    </svg>
+                    </div>
+                </br>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

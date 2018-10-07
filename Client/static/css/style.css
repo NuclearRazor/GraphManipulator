@@ -1,0 +1,72 @@
+table
+{
+    border: 2px solid #55a4e0;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+table.options_table
+{
+    border: none;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 1em;
+}
+
+.options_panel
+{
+    background-color: white;
+    display: none;
+    overflow: hidden;
+}
+
+textarea
+{
+    resize: none;
+    border: 2px solid #55a4e0;
+}
+
+
+#btnConnect
+{
+    width: 100%;
+}
+
+#btnDisconnect
+{
+    width: 100%;
+}
+
+#btnPlot
+{
+    width: 100%;
+}
+
+#btnOptions
+{
+    width: 100%;
+}
+
+svg
+{
+  overflow: hidden;
+}
+
+.node rect
+{
+  stroke: #333;
+  stroke-width: 1.5px;
+  fill: #55a4e0;
+}
+
+.edgeLabel rect
+{
+  fill: #fff;
+}
+
+.edgePath
+{
+  stroke: #333;
+  stroke-width: 1.5px;
+  fill: none;
+}
