@@ -30,7 +30,7 @@ Options are:
 **Example**:
 
 <pre>
-<a href=""><img src="" align="middle" height="450">
+<a href="https://github.com/NuclearRazor/GraphManipulator/blob/master/common/img/view.png"><img src="https://github.com/NuclearRazor/GraphManipulator/blob/master/common/img/view.png" align="middle" height="450">
 </a>
 </pre>
 
