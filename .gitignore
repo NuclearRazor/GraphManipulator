@@ -1,4 +1,6 @@
 
+build_mvs_release
+bin
 src/\.vs/
 
 Client/\.idea/

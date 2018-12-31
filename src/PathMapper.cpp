@@ -41,3 +41,12 @@ std::string serialize_graph(std::vector <int> _payload)
   return graph_datastring;
 
 }
+
+
+int main()
+{
+    //use with already verifed port
+    WSServer(4560);
+
+    return 0;
+}
