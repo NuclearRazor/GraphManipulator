@@ -16,6 +16,19 @@ Options are:
 - D3 (graph visualization as svg object)
 - graphlib-dot (deserialize incoming bits thread to graphlib object)
 
+To build with CMakeLists pass library pathes to:
+
+- OpenSSL
+- Libuv
+- Boost
+
+For example On Windows x64, MVS2017:
+
+cmake -DCMAKE_BUILD_TYPE=release cmake -DLIBUV_ROOT_DIR=C:/Users/ivan-/vcpkg/installed/x64-windows -DOPENSSL_ROOT_DIR=C:/OpenSSL-Win64-1.1.1/ -DBOOST_ROOT=C:/boost_1_68_0 -G "Visual Studio 15 2017 Win64" .. > log_cmake.txt 2>&1
+
+build target:
+
+cmake --build . --target PathMapper --config release > log_build.txt 2>&1
 
 **UI (design) side was implemented by**:
 
