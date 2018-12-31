@@ -40,14 +40,14 @@ WSServer::WSServer(unsigned int port)
 
     //process weboskcet message if it exist and called
     //and update Hub object - &h
-    h.onConnection([&h](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req)
+    h.onConnection([&](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req)
     {
       std::cout << "Connected!" << std::endl;
     });
 
 
     //close weboskcet connection
-    h.onDisconnection([&h](uWS::WebSocket<uWS::SERVER> *ws, int code, char *msg, size_t length)
+    h.onDisconnection([&](uWS::WebSocket<uWS::SERVER> *ws, int code, char *msg, size_t length)
     {
       ws->close();
       std::cout << "Disconnected!" << "\n";
@@ -70,19 +70,24 @@ void WSServer::update_payload(char *message, size_t length)
 {
   using json = nlohmann::json;
 
-  std::string _local_msg = std::string(message, length);
+  try
+  {
+      json json_obj = json::parse(std::string(message, length));
 
-  json json_obj = json::parse(_local_msg);
+      std::cout << json_obj["matrix_dim"] << "\n";
+      std::cout << json_obj["characters_length"] << "\n";
+      std::cout << json_obj["metrics"] << "\n";
 
-  std::cout << json_obj["matrix_dim"] << "\n";
-  std::cout << json_obj["characters_length"] << "\n";
-  std::cout << json_obj["metrics"] << "\n";
+      payload_data[0] = int(json_obj["matrix_dim"]);
+      payload_data[1] = int(json_obj["characters_length"]);
+      payload_data[2] = int(json_obj["metrics"]);
 
-  payload_data[0] = int(json_obj["matrix_dim"]);
-  payload_data[1] = int(json_obj["characters_length"]);
-  payload_data[2] = int(json_obj["metrics"]);
-
-  call_graph_mapper();
+      call_graph_mapper();
+  }
+  catch (...)
+  {
+      std::runtime_error("Cannot process on JSON");
+  }
 
 }
 
