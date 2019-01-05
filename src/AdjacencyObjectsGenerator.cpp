@@ -8,7 +8,6 @@ AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
   int _char_dim,
   int _metric_dim)
 {
-  std::cout << "DEBUG: CALL GENERATE DATA\n";
 
   this->overall_adjency_matrix_dimension = (_adjency_matrix_dim > 1) ? _adjency_matrix_dim : 2;
   this->characters_dimension = (_char_dim > 0) ? _char_dim : 3;
@@ -80,7 +79,7 @@ AdjacencyObjectsGenerator::generate_data()
 
     std::pair <std::string, std::string> _generated_nodes;
 
-    for (auto & it_j : servers_names)
+    for (auto &it_j : servers_names)
     {
 
       if (it_i != it_j)

@@ -15,24 +15,30 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
+#include <utility>
 #include <iostream>
-#include <thread>
+#include <string>
 #include <iterator>
 #include <numeric>
 #include <random>
-#include <utility>
 #include <vector>
-#include <string>
 #include <map>
+#include <string>
 #include <algorithm>
-#include <atomic>
-#include <memory>
+//#include <atomic>
+//#include <memory>
+//#include <thread>
 
 
 std::string serialize_graph(std::vector <int> _payload);
 
 template <typename T, typename D>
-std::ostream& operator<<(std::ostream& os, std::vector< std::pair <T, D> > &lst);
+std::ostream& operator<<(std::ostream& os, 
+    std::vector< std::pair <T, D> > &lst);
+
+template <typename K, typename P, typename S>
+std::ostream& operator<<(std::ostream& os, 
+    std::map <K, std::vector <std::pair <P, S>>> &mlst);
 
 class GraphMapper
 {

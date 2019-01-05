@@ -7,19 +7,9 @@
 GraphMapper::GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data)
 {
 
-  std::cout << "\n---Table of nodes data:\n" << "\n";
+  std::cout << "\n---Table of nodes:\n" << "\n";
 
-  for (auto &map_el : servers_data)
-  {
-
-    std::cout << map_el.first << " ";
-
-    for (auto &s_node : map_el.second)
-    {
-      std::cout << s_node.first << " " << s_node.second << "\n";
-    }
-
-  }
+  std::cout << servers_data << "\n";
 
   ////passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
   this->table_of_pathes = servers_data;
