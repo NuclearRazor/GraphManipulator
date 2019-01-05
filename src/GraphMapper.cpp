@@ -121,10 +121,9 @@ void GraphMapper::get_shortest_path(
   typedef boost::graph_traits < ServersGraph >::vertex_iterator Viter;
   typedef int Weight;
 
-  const int START_VERTEX = 1;
-
   //START POINT IN DJKSTRA ALGORITHM
-  Vertex s = boost::vertex(START_VERTEX, G);
+  Viter initial = boost::vertices(G).first;
+  Vertex s = *initial;
 
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // To store parents nodes
   std::vector <Weight> distances(boost::num_vertices(G)); // To store distances/weights/...

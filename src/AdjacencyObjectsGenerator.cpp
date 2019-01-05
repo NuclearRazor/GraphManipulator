@@ -74,6 +74,10 @@ AdjacencyObjectsGenerator::generate_data()
 
   //generate adjacency table
   //if i == j (node A and node B are connected)
+
+  //TODO
+  //generate only unique adjacency pairs
+
   for (auto &it_i : servers_names)
   {
 
