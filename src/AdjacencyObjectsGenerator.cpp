@@ -113,12 +113,10 @@ AdjacencyObjectsGenerator::generate_data()
 
   /*-------------------GENERATE KEY FOR EACH NODE/PAIR START----------------------*/
 
-  std::cout << "---Count of server pairs/nodes is: " << ps.size() << "\n";
-
   std::pair <std::string, std::string>  servers_pair;
-
   std::map < int, std::vector < std::pair <std::string, std::string> > > servers_data;
 
+  std::cout << "---Count of server pairs/nodes is: " << ps.size() << "\n";
   for (auto &s_node : ps)
   {
     std::cout << s_node.first << " " << s_node.second << "\n";
@@ -136,6 +134,7 @@ AdjacencyObjectsGenerator::generate_data()
 std::map <int, std::vector < std::pair <std::string, std::string> >>
 AdjacencyObjectsGenerator::get_adjency_objects()
 {
+  std::lock_guard <std::mutex> guard(mtx);
   return generate_data();
 }
 

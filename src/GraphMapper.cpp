@@ -11,14 +11,18 @@ GraphMapper::GraphMapper(std::map <int, std::vector <std::pair <std::string, std
 
   std::cout << servers_data << "\n";
 
-  ////passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
+  //passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
   this->table_of_pathes = servers_data;
 
-  ////count of nodes it is a count of pairs
+  //count of nodes it is a count of pairs
   this->nodes_count = servers_data.size();
 
+}
 
-  ///*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
+void GraphMapper::get_shortest_path()
+{
+
+  /*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
 
   //GRAPH COUNT OF VERTECIES SIMILAR TO 2*nodes_count
   ServersGraph G(2 * nodes_count + 1);
@@ -32,67 +36,51 @@ GraphMapper::GraphMapper(std::map <int, std::vector <std::pair <std::string, std
   for (auto &it_table_data : table_of_pathes)
   {
 
-    auto path_node = it_table_data.second;
+      auto path_node = it_table_data.second;
 
-    /*
-    fill each edge (k)
-    with first vertex (i) and second (i + 1)
-    and assign to the current edge weight, that was generated
-    */
-    for (auto &s_node : path_node)
-    {
-      //add vertex name (i) - server name
-      G[it_graph].server_name = s_node.first;
+      /*
+      fill each edge (k)
+      with first vertex (i) and second (i + 1)
+      and assign to the current edge weight, that was generated
+      */
+      for (auto &s_node : path_node)
+      {
+          //add vertex name (i) - server name
+          G[it_graph].server_name = s_node.first;
 
-      //add vertex (i) with it's key
-      G[it_graph].server_key = it_table_data.first;
+          //add vertex (i) with it's key
+          G[it_graph].server_key = it_table_data.first;
 
-      //add vertex (i) to graph G
-      auto v1 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
+          //add vertex (i) to graph G
+          auto v1 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
 
-      //increase iterator of vertecies
-      ++it_graph;
+          //increase iterator of vertecies
+          ++it_graph;
 
-      //add vertex name (i + 1) - server name
-      G[it_graph].server_name = s_node.second;
+          //add vertex name (i + 1) - server name
+          G[it_graph].server_name = s_node.second;
 
-      //add vertex (i + 1) with it's key
-      G[it_graph].server_key = it_table_data.first;
+          //add vertex (i + 1) with it's key
+          G[it_graph].server_key = it_table_data.first;
 
-      auto v2 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
+          auto v2 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
 
-      ////add vertex (i + 1) to graph G
-      auto e = boost::add_edge(v1, v2, G).first;
+          ////add vertex (i + 1) to graph G
+          auto e = boost::add_edge(v1, v2, G).first;
 
-      //add edge name of current edge (k) to graph G
-      G[e].edge_name = "QKD";
+          //add edge name of current edge (k) to graph G
+          G[e].edge_name = "QKD";
 
-      G[e].qkd_key = it_table_data.first;
+          G[e].qkd_key = it_table_data.first;
 
-      //increase iterator to get next vertex to filling data
-      ++it_graph;
+          //increase iterator to get next vertex to filling data
+          ++it_graph;
 
-    }
+      }
 
   }
 
   std::cout << "\n---Vertecies and edges of graph:\n" << "\n";
-
-  get_shortest_path(G);
-
-  /*--------------------------GRAPH SHORTEST PATH FIND END-----------------------*/
-
-}
-
-void GraphMapper::get_shortest_path(
-  boost::adjacency_list<
-  boost::vecS,
-  boost::vecS,
-  boost::undirectedS,
-  VertexData,
-  boost::property<boost::edge_weight_t, int, EdgeData>
-  > & G)
-{
 
   for (unsigned int l = 0; l < 2 * nodes_count; ++l)
   {
@@ -123,7 +111,17 @@ void GraphMapper::get_shortest_path(
 
   //START POINT IN DJKSTRA ALGORITHM
   Viter initial = boost::vertices(G).first;
-  Vertex s = *initial;
+
+  Vertex s = 0;
+
+  if(!(*initial)) 
+  {
+      Vertex s = *initial;
+  }
+  else
+  {
+      throw std::runtime_error("Cannot get value of first vertex");
+  }
 
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // To store parents nodes
   std::vector <Weight> distances(boost::num_vertices(G)); // To store distances/weights/...
@@ -136,6 +134,9 @@ void GraphMapper::get_shortest_path(
 
   PredecessorMap predecessorMap(&predecessors[0], indexMap);
   DistanceMap distanceMap(&distances[0], indexMap);
+
+  if (!(s))
+      std::cout << "Warning: initial vertex is equal zero\n";
 
   //[1] parameter -> graph
   //[2] parameter -> start point (selected vertex)
@@ -157,7 +158,7 @@ void GraphMapper::get_shortest_path(
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
 
-  //container to store vertices integer indexes
+  //store vertices integer indexes
   std::vector <Vertex> p(boost::num_vertices(G));
 
   boost::graph_traits <ServersGraph>::edge_iterator ei, ei_end;
@@ -169,9 +170,6 @@ void GraphMapper::get_shortest_path(
 
   VD start_vertex = boost::num_vertices(G);
   VD end_vertex = boost::num_vertices(G);
-
-  //std::vector <VD> _pred(boost::num_vertices(G), G.null_vertex());
-  //std::vector <size_t> _dist(boost::num_vertices(G), G.null_vertex());
 
   auto predmap = predecessors.data(); // interior properties: boost::get(boost::vertex_predecessor, g);
   auto distmap = distances.data();
@@ -215,7 +213,7 @@ void GraphMapper::get_shortest_path(
 
   std::vector < std::pair <std::string, std::string> > _buf_pairs;
 
-  //print out path table and store to .dot file
+  //print out path table and store it to .dot file
   for (std::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
   {
     boost::graph_traits < ServersGraph >::edge_descriptor e = *ei;
@@ -260,6 +258,9 @@ void GraphMapper::get_shortest_path(
   std::cout << "GRAPH DATA:\n\n" << graph_data << "\n";
 
   inFile.close();
+
+  /*--------------------------GRAPH SHORTEST PATH FIND END-----------------------*/
+
 }
 
 
@@ -272,6 +273,7 @@ GraphMapper::get_actual_table()
 
 std::string GraphMapper::get_graph()
 {
+  std::lock_guard <std::mutex> guard(mtx);
   return graph_data;
 }
 

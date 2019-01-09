@@ -25,12 +25,12 @@
 #include <map>
 #include <string>
 #include <algorithm>
-//#include <atomic>
-//#include <memory>
-//#include <thread>
 
+#include <memory>
+#include <thread>
+#include <future>
 
-std::string serialize_graph(std::vector <int> _payload);
+std::string serialize_graph(const std::vector <int>& _payload);
 
 template <typename T, typename D>
 std::ostream& operator<<(std::ostream& os, 
@@ -74,6 +74,9 @@ public:
 
   GraphMapper() = default;
   GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data);
+  GraphMapper(GraphMapper &&) = default;
+  GraphMapper(const GraphMapper&) = default;
+  GraphMapper& operator=(const GraphMapper&) = default;
   ~GraphMapper() = default;
 
   /*
@@ -82,14 +85,7 @@ public:
   show path table, generated dot file of graph
 
   */
-  void get_shortest_path(
-    boost::adjacency_list<
-    boost::vecS,
-    boost::vecS,
-    boost::undirectedS,
-    VertexData,
-    boost::property<boost::edge_weight_t, int, EdgeData>
-    > & G);
+  void get_shortest_path();
 
   /*
 

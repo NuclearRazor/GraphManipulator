@@ -12,7 +12,11 @@ This header include WSServer class methods declaration
 
 #include <uWS/uWS.h>
 #include "json.hpp"
-
+#include <atomic>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <future>
 
 class WSServer
 {
@@ -20,6 +24,9 @@ class WSServer
 public:
 
   WSServer(unsigned int port);
+  WSServer(WSServer &&) = default;
+  WSServer(const WSServer&) = default;
+  WSServer& operator=(const WSServer&) = default;
   ~WSServer() = default;
 
   void update_payload(char *message, size_t length);

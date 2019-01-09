@@ -36,34 +36,57 @@ std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <
 }
 
 
-std::string serialize_graph(std::vector <int> _payload)
+std::string serialize_graph(const std::vector <int>& _payload)
 {
+    using namespace std::literals::chrono_literals;
+    std::this_thread::sleep_for(15ms);
 
-  for (auto &v_el : _payload)
-  {
-    std::cout << v_el << "\n";
-  }
+    for (auto &v_el : _payload)
+    {
+        std::cout << v_el << "\n";
+    }
 
-  using namespace std::literals::chrono_literals;
+    AdjacencyObjectsGenerator* task_generate = new AdjacencyObjectsGenerator(_payload[1], _payload[0], _payload[2]);
+    std::map <int, std::vector < std::pair <std::string, std::string> > > _buf_servers_data;
+    std::thread task_thread_generate([&] {_buf_servers_data = task_generate->get_adjency_objects(); });
 
-  std::map <int, std::vector < std::pair <std::string, std::string> > > _buf_servers_data = AdjacencyObjectsGenerator(_payload[1], _payload[0], _payload[2]).get_adjency_objects();
+    //task_thread_generate.detach();
+    if (task_thread_generate.joinable())
+    {
+        task_thread_generate.join();
+    }
 
-  GraphMapper ExecutableTable(_buf_servers_data);
+    std::this_thread::sleep_for(1ms);
 
-  std::string graph_datastring = ExecutableTable.get_graph();
+    GraphMapper* task_execute_table = new GraphMapper(_buf_servers_data);
+    std::thread task_thread_execute(&GraphMapper::get_shortest_path, std::move(task_execute_table));
 
-  std::cout << graph_datastring << "\n";
+    //task_thread_execute.detach();
+    if (task_thread_execute.joinable())
+    {
+        task_thread_execute.join();
+    }
 
-  std::this_thread::sleep_for(10ms);
+    std::this_thread::sleep_for(2ms);
 
-  return graph_datastring;
+    std::string graph_datastring;
+    std::thread task_thread_getgraph([&] {graph_datastring = task_execute_table->get_graph(); });
 
+    //task_thread_getgraph.detach();
+    if (task_thread_getgraph.joinable())
+    {
+        task_thread_getgraph.join();
+    }
+
+    return graph_datastring;
 }
 
 
 int main()
 {
     //use with already verifed port
+    using namespace std::literals::chrono_literals;
+    std::this_thread::sleep_for(25ms);
     WSServer(4560);
 
     return 0;

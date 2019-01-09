@@ -30,8 +30,20 @@ WSServer::WSServer(unsigned int port)
     //process on items by lambdas
     h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode)
     {
+      //update_payload(msg, length);
 
-      update_payload(msg, length);
+      //std::lock_guard <std::mutex> guard(mtx);
+      using namespace std::literals::chrono_literals;
+
+      std::thread task_thread_serialize(&WSServer::update_payload, this, std::ref(msg), std::ref(length));
+
+      //task_thread_serialize.detach();
+      if (task_thread_serialize.joinable())
+      {
+          task_thread_serialize.join();
+      }
+
+      std::this_thread::sleep_for(5ms);
 
       ws->send(graph_data.c_str(), graph_data.length(), opCode);
 
@@ -72,6 +84,7 @@ void WSServer::update_payload(char *message, size_t length)
 
   try
   {
+      std::cout << "call update\n";
       json json_obj = json::parse(std::string(message, length));
 
       std::cout << json_obj["matrix_dim"] << "\n";
@@ -82,11 +95,21 @@ void WSServer::update_payload(char *message, size_t length)
       payload_data[1] = int(json_obj["characters_length"]);
       payload_data[2] = int(json_obj["metrics"]);
 
-      call_graph_mapper();
+      using namespace std::literals::chrono_literals;
+
+      std::thread task_thread_map(&WSServer::call_graph_mapper, this);
+
+      //task_thread_map.detach();
+      if (task_thread_map.joinable())
+      {
+          task_thread_map.join();
+      }
+
+      std::this_thread::sleep_for(3ms);
   }
   catch (...)
   {
-      std::runtime_error("Cannot process on JSON");
+      throw std::runtime_error("Cannot process on JSON");
   }
 
 }
@@ -96,7 +119,18 @@ void WSServer::update_payload(char *message, size_t length)
 //output: graph dot file - std::string object
 void WSServer::call_graph_mapper()
 {
-  graph_data = serialize_graph(payload_data);
+  std::cout << "call call_graph_mapper\n";
+  using namespace std::literals::chrono_literals;
+
+  std::thread task_thread_map([&] {graph_data = serialize_graph(payload_data); });
+
+  //task_thread_map.detach();
+  if (task_thread_map.joinable())
+  {
+      task_thread_map.join();
+  }
+
+  std::this_thread::sleep_for(2ms);
 }
 
 
