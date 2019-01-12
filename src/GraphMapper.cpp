@@ -104,14 +104,12 @@ void GraphMapper::get_shortest_path()
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
-  typedef boost::property_map < ServersGraph, boost::vertex_index_t >::type IndexMap;
-  typedef boost::graph_traits < ServersGraph >::vertex_descriptor Vertex;
   typedef boost::graph_traits < ServersGraph >::vertex_iterator Viter;
-  typedef int Weight;
 
   //START POINT IN DJKSTRA ALGORITHM
   Viter initial = boost::vertices(G).first;
 
+  typedef boost::graph_traits < ServersGraph >::vertex_descriptor Vertex;
   Vertex s = 0;
 
   if(!(*initial)) 
@@ -123,17 +121,10 @@ void GraphMapper::get_shortest_path()
       throw std::runtime_error("Cannot get value of first vertex");
   }
 
-  std::vector <Vertex> predecessors(boost::num_vertices(G)); // To store parents nodes
-  std::vector <Weight> distances(boost::num_vertices(G)); // To store distances/weights/...
 
-  IndexMap indexMap;
-
-  //DEFINE MAP ITERATOR OVER ALL PARAMETERS OF GRAPH
-  typedef boost::iterator_property_map < Vertex*, IndexMap, Vertex, Vertex& > PredecessorMap;
-  typedef boost::iterator_property_map < Weight*, IndexMap, Weight, Weight& > DistanceMap;
-
-  PredecessorMap predecessorMap(&predecessors[0], indexMap);
-  DistanceMap distanceMap(&distances[0], indexMap);
+  std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
+  typedef int Weight;
+  std::vector <Weight> distances(boost::num_vertices(G)); // store distances
 
   if (!(s))
       std::cout << "Warning: initial vertex is equal zero\n";
@@ -141,7 +132,12 @@ void GraphMapper::get_shortest_path()
   //[1] parameter -> graph
   //[2] parameter -> start point (selected vertex)
   //[3] parameter -> graph map properties
-  boost::dijkstra_shortest_paths(G, s, boost::distance_map(distanceMap).predecessor_map(predecessorMap));
+
+  //create automatically propery map by boost iterator
+  //https://svn.boost.org/trac10/changeset/82439
+  boost::dijkstra_shortest_paths(G, s, 
+      boost::predecessor_map(boost::make_iterator_property_map(predecessors.begin(), boost::get(boost::vertex_index, G)))
+      .distance_map(boost::make_iterator_property_map(distances.begin(), boost::get(boost::vertex_index, G))));
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM END-----------------------*/
 
