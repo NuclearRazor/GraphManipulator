@@ -13,11 +13,11 @@ This header include wsserver class methods definitions
 
 WSServer::WSServer(unsigned int port)
 {
-
   //resize vector with 3 elements as graph options parameters
   payload_data.resize(3);
 
   uWS::Hub h;
+  GraphProcessor* task_process = new GraphProcessor();
 
   //listen port 
   if (h.listen(port))
@@ -80,7 +80,6 @@ void WSServer::update_payload(char *message, size_t length)
 
   try
   {
-      std::cout << "call update\n";
       json json_obj = json::parse(std::string(message, length));
 
       std::cout << json_obj["matrix_dim"] << "\n";
@@ -114,12 +113,12 @@ void WSServer::update_payload(char *message, size_t length)
 //output: graph dot file - std::string object
 void WSServer::call_graph_mapper()
 {
-  std::thread task_thread_map([&] {graph_data = GraphProcessor().serialize_graph(payload_data); });
+  std::thread task_thread_process([&] {graph_data = task_process->serialize_graph(payload_data); });
 
-  //task_thread_map.detach();
-  if (task_thread_map.joinable())
+  //task_thread_process.detach();
+  if (task_thread_process.joinable())
   {
-      task_thread_map.join();
+      task_thread_process.join();
   }
 
   using namespace std::literals::chrono_literals;

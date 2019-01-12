@@ -36,6 +36,7 @@ private:
 
   std::vector <int> payload_data;
   std::string graph_data;
+  GraphProcessor* task_process;
 
 };
 
