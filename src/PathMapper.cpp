@@ -22,11 +22,11 @@ std::ostream& operator<<(std::ostream& os, std::vector< std::pair <T, D> > &lst)
 template <typename K, typename P, typename S>
 std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <P, S>>> &mlst)
 {
-    for ( auto &m_iter: mlst)
+    for (const auto &m_iter: mlst)
     {
         std::cout << m_iter.first << " ";
 
-        for (auto &m_node: m_iter.second)
+        for (const auto &m_node: m_iter.second)
         {
             std::cout << m_node.first << " " << m_node.second << "\n";
         }
