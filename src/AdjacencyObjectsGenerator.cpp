@@ -106,6 +106,18 @@ AdjacencyObjectsGenerator::generate_data()
 
   /*--------------------------------ADD SERVERS END------------------------------*/
 
+  //create set
+  std::set <std::pair <std::string, std::string>> unique_set;
+
+  //get vector size fof adjacency nodes pairs
+  unsigned size = ps.size();
+
+  //add elements of nodes to new set
+  for (unsigned i = 0; i < size; ++i) unique_set.insert(ps[i]);
+
+  //replace elements with unique nodes to vector
+  ps.assign(unique_set.begin(), unique_set.end());
+
 
   // display the results - debug info
   std::cout << "\n---Servers nodes:\n\n" << ps << "\n";
