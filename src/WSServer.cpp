@@ -30,11 +30,6 @@ WSServer::WSServer(unsigned int port)
     //process on items by lambdas
     h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode)
     {
-      //update_payload(msg, length);
-
-      //std::lock_guard <std::mutex> guard(mtx);
-      using namespace std::literals::chrono_literals;
-
       std::thread task_thread_serialize(&WSServer::update_payload, this, std::ref(msg), std::ref(length));
 
       //task_thread_serialize.detach();
@@ -43,6 +38,7 @@ WSServer::WSServer(unsigned int port)
           task_thread_serialize.join();
       }
 
+      using namespace std::literals::chrono_literals;
       std::this_thread::sleep_for(5ms);
 
       ws->send(graph_data.c_str(), graph_data.length(), opCode);
@@ -95,8 +91,6 @@ void WSServer::update_payload(char *message, size_t length)
       payload_data[1] = int(json_obj["characters_length"]);
       payload_data[2] = int(json_obj["metrics"]);
 
-      using namespace std::literals::chrono_literals;
-
       std::thread task_thread_map(&WSServer::call_graph_mapper, this);
 
       //task_thread_map.detach();
@@ -105,6 +99,7 @@ void WSServer::update_payload(char *message, size_t length)
           task_thread_map.join();
       }
 
+      using namespace std::literals::chrono_literals;
       std::this_thread::sleep_for(3ms);
   }
   catch (...)
@@ -119,10 +114,7 @@ void WSServer::update_payload(char *message, size_t length)
 //output: graph dot file - std::string object
 void WSServer::call_graph_mapper()
 {
-  std::cout << "call call_graph_mapper\n";
-  using namespace std::literals::chrono_literals;
-
-  std::thread task_thread_map([&] {graph_data = serialize_graph(payload_data); });
+  std::thread task_thread_map([&] {graph_data = GraphProcessor().serialize_graph(payload_data); });
 
   //task_thread_map.detach();
   if (task_thread_map.joinable())
@@ -130,6 +122,7 @@ void WSServer::call_graph_mapper()
       task_thread_map.join();
   }
 
+  using namespace std::literals::chrono_literals;
   std::this_thread::sleep_for(2ms);
 }
 

@@ -30,7 +30,6 @@
 #include <thread>
 #include <future>
 
-std::string serialize_graph(const std::vector <int>& _payload);
 
 template <typename T, typename D>
 std::ostream& operator<<(std::ostream& os, 
