@@ -250,7 +250,6 @@ GraphMapper::get_actual_table()
 
 std::string GraphMapper::get_graph()
 {
-  std::lock_guard <std::mutex> guard(mtx);
   return graph_data;
 }
 

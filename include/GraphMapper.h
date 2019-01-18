@@ -28,22 +28,23 @@
 
 #include <memory>
 #include <thread>
+#include <mutex>
 #include <future>
 
 
 template <typename T, typename D>
-std::ostream& operator<<(std::ostream& os, 
+inline std::ostream& operator<<(std::ostream& os, 
     std::vector< std::pair <T, D> > &lst);
 
 template <typename K, typename P, typename S>
-std::ostream& operator<<(std::ostream& os, 
+inline std::ostream& operator<<(std::ostream& os, 
     std::map <K, std::vector <std::pair <P, S>>> &mlst);
 
-class GraphMapper
+class GraphMapper final
 {
 public:
 
-  //Public map to store updated path table by Djkstra algorithm
+  //public map to store updated path table by Djkstra algorithm
   std::map < int, std::vector < std::pair <std::string, std::string> > > actual_pathes;
 
   //Vertex data structure
@@ -54,7 +55,7 @@ public:
   };
 
 
-  //Edges data structure
+  //edges data structure
   struct EdgeData
   {
     std::string edge_name;
@@ -72,11 +73,11 @@ public:
   > ServersGraph;
 
   GraphMapper() = default;
-  GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data);
-  GraphMapper(GraphMapper &&) = default;
-  GraphMapper(const GraphMapper&) = default;
-  GraphMapper& operator=(const GraphMapper&) = default;
   ~GraphMapper() = default;
+  GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data);
+  GraphMapper(GraphMapper &&) = delete;
+  GraphMapper(const GraphMapper&) = delete;
+  GraphMapper& operator=(const GraphMapper&) = delete;
 
   /*
 
@@ -86,31 +87,22 @@ public:
   */
   void get_shortest_path();
 
-  /*
-
-  method returns actual pathes table
-
-  */
+  //returns actual pathes table
   std::map< int, std::vector < std::pair <std::string, std::string> > >
   get_actual_table();
 
-  /*
-
-  returns actual graph
-  output: std::string
-
-  */
+  //returns actual graph
   std::string get_graph();
 
 private:
 
-  //TABLE OF PATHES
+  //table of pathes
   std::map <int, std::vector < std::pair <std::string, std::string> >> table_of_pathes;
 
-  //COUNT OF NODES (SERVER PAIRS WITH SIMILAR KEY)
-  unsigned nodes_count;
+  //count of nodes ("servers" pairs with key values)
+  size_t nodes_count;
 
-  //FINAL GRAPH, STRING
+  //graph representation as string
   std::string graph_data;
 
 };

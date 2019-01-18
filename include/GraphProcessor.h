@@ -1,18 +1,17 @@
 #ifndef GRAPHPROCESSOR_H
 #define GRAPHPROCESSOR_H
 
-class GraphProcessor
+class GraphProcessor final
 {
 public:
-    GraphProcessor() {};
-    GraphProcessor(const GraphProcessor &) {};
+    GraphProcessor() = default;
+    ~GraphProcessor() = default;
+    GraphProcessor(const GraphProcessor &) = delete;
     GraphProcessor(GraphProcessor &&) {};
-    ~GraphProcessor() {};
+    GraphProcessor& operator =(const GraphProcessor &) = delete;
+    GraphProcessor& operator =(GraphProcessor &&) = delete;
 
-    GraphProcessor& operator =(const GraphProcessor &) {};
-    GraphProcessor& operator =(GraphProcessor &&) {};
-
-    static std::string serialize_graph(const std::vector <int>& _payload);
+    std::string serialize_graph(const std::vector <int>& _payload);
 
 };
 

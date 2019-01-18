@@ -4,9 +4,9 @@
 #include "../include/AdjacencyObjectsGenerator.h"
 
 AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
-  int _adjency_matrix_dim,
-  int _char_dim,
-  int _metric_dim)
+  const int _adjency_matrix_dim,
+  const int _char_dim,
+  const int _metric_dim)
 {
 
   this->overall_adjency_matrix_dimension = (_adjency_matrix_dim > 1) ? _adjency_matrix_dim : 2;
@@ -110,7 +110,7 @@ AdjacencyObjectsGenerator::generate_data()
   std::set <std::pair <std::string, std::string>> unique_set;
 
   //get vector size fof adjacency nodes pairs
-  unsigned size = ps.size();
+  size_t size = ps.size();
 
   //add elements of nodes to new set
   for (unsigned i = 0; i < size; ++i) unique_set.insert(ps[i]);
@@ -146,7 +146,6 @@ AdjacencyObjectsGenerator::generate_data()
 std::map <int, std::vector < std::pair <std::string, std::string> >>
 AdjacencyObjectsGenerator::get_adjency_objects()
 {
-  std::lock_guard <std::mutex> guard(mtx);
   return generate_data();
 }
 

@@ -11,48 +11,31 @@ This header include wsserver class methods definitions
 #include "../include/WSServer.h"
 
 
-WSServer::WSServer(unsigned int port)
+WSServer::WSServer(const unsigned int port)
 {
   //resize vector with 3 elements as graph options parameters
   payload_data.resize(3);
 
   uWS::Hub h;
-  GraphProcessor* task_process = new GraphProcessor();
 
   //listen port 
   if (h.listen(port))
   {
-
     std::cout << "Listening to port " << port << "\n";
-
 
     //uWs Hub istance process on each current callable for weboskcet instance
     //process on items by lambdas
     h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode)
     {
-      std::thread task_thread_serialize(&WSServer::update_payload, this, std::ref(msg), std::ref(length));
-
-      //task_thread_serialize.detach();
-      if (task_thread_serialize.joinable())
-      {
-          task_thread_serialize.join();
-      }
-
-      using namespace std::literals::chrono_literals;
-      std::this_thread::sleep_for(5ms);
-
+      this->update_payload(msg, length);
       ws->send(graph_data.c_str(), graph_data.length(), opCode);
-
     });
 
-
-    //process weboskcet message if it exist and called
-    //and update Hub object - &h
+    //process on message
     h.onConnection([&](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req)
     {
       std::cout << "Connected!" << std::endl;
     });
-
 
     //close weboskcet connection
     h.onDisconnection([&](uWS::WebSocket<uWS::SERVER> *ws, int code, char *msg, size_t length)
@@ -60,7 +43,6 @@ WSServer::WSServer(unsigned int port)
       ws->close();
       std::cout << "Disconnected!" << "\n";
     });
-
   }
   else
   {
@@ -76,6 +58,7 @@ WSServer::WSServer(unsigned int port)
 //set parameters of graph as int values into vector of int's
 void WSServer::update_payload(char *message, size_t length)
 {
+  std::cout << "update_payload WSSERVER\n";
   using json = nlohmann::json;
 
   try
@@ -90,16 +73,8 @@ void WSServer::update_payload(char *message, size_t length)
       payload_data[1] = int(json_obj["characters_length"]);
       payload_data[2] = int(json_obj["metrics"]);
 
-      std::thread task_thread_map(&WSServer::call_graph_mapper, this);
+      this->call_graph_mapper();
 
-      //task_thread_map.detach();
-      if (task_thread_map.joinable())
-      {
-          task_thread_map.join();
-      }
-
-      using namespace std::literals::chrono_literals;
-      std::this_thread::sleep_for(3ms);
   }
   catch (...)
   {
@@ -110,19 +85,11 @@ void WSServer::update_payload(char *message, size_t length)
 
 
 //input: graph options - scalars of int's
-//output: graph dot file - std::string object
+//output: graph as std::string object
 void WSServer::call_graph_mapper()
 {
-  std::thread task_thread_process([&] {graph_data = task_process->serialize_graph(payload_data); });
-
-  //task_thread_process.detach();
-  if (task_thread_process.joinable())
-  {
-      task_thread_process.join();
-  }
-
-  using namespace std::literals::chrono_literals;
-  std::this_thread::sleep_for(2ms);
+    std::unique_ptr<GraphProcessor> UGraphProcessorInstance = std::make_unique<GraphProcessor>();
+    graph_data = UGraphProcessorInstance->serialize_graph(payload_data);
 }
 
 

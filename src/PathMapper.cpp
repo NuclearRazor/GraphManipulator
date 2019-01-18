@@ -8,7 +8,7 @@
 
 
 template <typename T, typename D>
-std::ostream& operator<<(std::ostream& os, std::vector< std::pair <T, D> > &lst)
+inline std::ostream& operator<<(std::ostream& os, std::vector< std::pair <T, D> > &lst)
 {
   for (const auto &p: lst)
   {
@@ -20,7 +20,7 @@ std::ostream& operator<<(std::ostream& os, std::vector< std::pair <T, D> > &lst)
 
 
 template <typename K, typename P, typename S>
-std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <P, S>>> &mlst)
+inline std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <P, S>>> &mlst)
 {
     for (const auto &m_iter: mlst)
     {
@@ -39,10 +39,6 @@ std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <
 
 int main()
 {
-    //use with already verifed port
-    using namespace std::literals::chrono_literals;
-    std::this_thread::sleep_for(25ms);
-
     WSServer(4560);
 
     return 0;

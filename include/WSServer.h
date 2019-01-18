@@ -18,15 +18,15 @@ This header include WSServer class methods declaration
 #include <mutex>
 #include <future>
 
-class WSServer
+class WSServer final
 {
 
 public:
 
-  WSServer(unsigned int port);
-  WSServer(WSServer &&) = default;
-  WSServer(const WSServer&) = default;
-  WSServer& operator=(const WSServer&) = default;
+  explicit WSServer(const unsigned int port);
+  WSServer(WSServer &&) = delete;
+  WSServer(const WSServer&) = delete;
+  WSServer& operator=(const WSServer&) = delete;
   ~WSServer() = default;
 
   void update_payload(char *message, size_t length);

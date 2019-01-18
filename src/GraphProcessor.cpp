@@ -11,46 +11,41 @@ This header include graphprocessor class methods definitions
 #include "../include/GraphProcessor.h"
 
 
+std::mutex mtx;
+
 std::string GraphProcessor::serialize_graph(const std::vector <int>& _payload)
 {
-    using namespace std::literals::chrono_literals;
-    std::this_thread::sleep_for(15ms);
+    std::lock_guard<std::mutex> guard(mtx);
 
-    for (auto &v_el : _payload)
+    for (const auto &v_el : _payload)
     {
         std::cout << v_el << "\n";
     }
 
-    AdjacencyObjectsGenerator* task_generate = new AdjacencyObjectsGenerator(_payload[1], _payload[0], _payload[2]);
-    std::map <int, std::vector < std::pair <std::string, std::string> > > _buf_servers_data;
-    std::thread task_thread_generate([&] {_buf_servers_data = task_generate->get_adjency_objects(); });
+    std::unique_ptr<AdjacencyObjectsGenerator> UAdjacencyObjects = std::make_unique<AdjacencyObjectsGenerator>(_payload[1], _payload[0], _payload[2]);
+    std::map < int, std::vector <std::pair <std::string, std::string>> > _buf_servers_data;
 
-    //task_thread_generate.detach();
-    if (task_thread_generate.joinable())
+    std::thread task_generate([&] {_buf_servers_data = UAdjacencyObjects->get_adjency_objects(); });
+
+    if (task_generate.joinable())
     {
-        task_thread_generate.join();
+        task_generate.join();
     }
 
-    std::this_thread::sleep_for(1ms);
+    std::unique_ptr<GraphMapper> UGraphMapper = std::make_unique<GraphMapper>(std::ref(_buf_servers_data));
+    std::thread task_processpath([&] { UGraphMapper->get_shortest_path(); });
 
-    GraphMapper* task_execute_table = new GraphMapper(_buf_servers_data);
-    std::thread task_thread_execute(&GraphMapper::get_shortest_path, std::move(task_execute_table));
-
-    //task_thread_execute.detach();
-    if (task_thread_execute.joinable())
+    if (task_processpath.joinable())
     {
-        task_thread_execute.join();
+        task_processpath.join();
     }
-
-    std::this_thread::sleep_for(2ms);
 
     std::string graph_datastring;
-    std::thread task_thread_getgraph([&] {graph_datastring = task_execute_table->get_graph(); });
+    std::thread task_getpath([&] { graph_datastring = UGraphMapper->get_graph(); });
 
-    //task_thread_getgraph.detach();
-    if (task_thread_getgraph.joinable())
+    if (task_getpath.joinable())
     {
-        task_thread_getgraph.join();
+        task_getpath.join();
     }
 
     return graph_datastring;

@@ -3,24 +3,20 @@
 
 #include "../include/GraphMapper.h"
 
-std::mutex mtx;
 
-class AdjacencyObjectsGenerator
+class AdjacencyObjectsGenerator final
 {
 
 public:
 
   AdjacencyObjectsGenerator() = default;
-
-  AdjacencyObjectsGenerator(int _adjency_matrix_dim,
-    int _char_dim,
-    int _metric_dim);
-
+  ~AdjacencyObjectsGenerator() = default;
+  AdjacencyObjectsGenerator(const int _adjency_matrix_dim,
+                            const int _char_dim,
+                            const int _metric_dim);
   AdjacencyObjectsGenerator(AdjacencyObjectsGenerator &&) = default;
   AdjacencyObjectsGenerator(const AdjacencyObjectsGenerator&) = default;
   AdjacencyObjectsGenerator& operator=(const AdjacencyObjectsGenerator&) = default;
-
-  ~AdjacencyObjectsGenerator() = default;
 
   /*
 
