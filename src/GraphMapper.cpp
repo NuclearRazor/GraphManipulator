@@ -4,19 +4,13 @@
 #include "../include/GraphMapper.h"
 
 
-GraphMapper::GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data)
+GraphMapper::GraphMapper(const std::map <int, std::vector <std::pair <std::string, std::string>>> &&servers_data)
 {
-
-  std::cout << "\n---Table of nodes:\n" << "\n";
-
-  std::cout << servers_data << "\n";
-
   //passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
   this->table_of_pathes = servers_data;
 
   //count of nodes it is a count of pairs
   this->nodes_count = servers_data.size();
-
 }
 
 void GraphMapper::get_shortest_path()
@@ -80,26 +74,24 @@ void GraphMapper::get_shortest_path()
 
   }
 
-  std::cout << "\n---Vertecies and edges of graph:\n" << "\n";
+  //for (unsigned int l = 0; l < 2 * nodes_count; ++l)
+  //{
+  //  ServersGraph::out_edge_iterator eit, eend;
 
-  for (unsigned int l = 0; l < 2 * nodes_count; ++l)
-  {
-    ServersGraph::out_edge_iterator eit, eend;
+  //  std::tie(eit, eend) = boost::out_edges(2 * nodes_count + l, G);
 
-    std::tie(eit, eend) = boost::out_edges(2 * nodes_count + l, G);
+  //  std::for_each(eit, eend, [&G](ServersGraph::edge_descriptor it)
+  //  {
 
-    std::for_each(eit, eend, [&G](ServersGraph::edge_descriptor it)
-    {
+  //    std::cout << G[boost::target(it, G)].server_name << "\t_____________\t" << G[boost::source(it, G)].server_name
+  //      << "\t<--->\t" << " [" << G[it].edge_name << "] - [" << G[it].qkd_key << "]" << "\n";
 
-      std::cout << G[boost::target(it, G)].server_name << "\t_____________\t" << G[boost::source(it, G)].server_name
-        << "\t<--->\t" << " [" << G[it].edge_name << "] - [" << G[it].qkd_key << "]" << "\n";
+  //    std::cout << "\n";
 
-      std::cout << "\n";
+  //  }
+  //  );
 
-    }
-    );
-
-  }
+  //}
 
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
@@ -141,9 +133,6 @@ void GraphMapper::get_shortest_path()
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM END-----------------------*/
 
-
-  std::cout << "\n";
-
   std::stringstream graph_stream;
   graph_stream << "digraph D {\n"
       << "  rankdir=LR\n"
@@ -156,9 +145,6 @@ void GraphMapper::get_shortest_path()
 
   boost::graph_traits <ServersGraph>::edge_iterator ei, ei_end;
 
-  std::cout << "\n---Path table: \n" << "\n";
-  std::cout << "---[start] --> [end]\n" << "\n";
-
   using VD = ServersGraph::vertex_descriptor;
 
   VD start_vertex = boost::num_vertices(G);
@@ -169,8 +155,6 @@ void GraphMapper::get_shortest_path()
 
   size_t distance = distmap[end_vertex];
 
-  std::cout << "Distance from # " << start_vertex << " to # " << end_vertex << ": " << distance << "\n";
-
   if (distance != size_t(-1))
   {
     std::deque<VD> path;
@@ -179,28 +163,23 @@ void GraphMapper::get_shortest_path()
     {
       path.push_front(predmap[current]);
       current = predmap[current];
-      std::cout << "current vertex: " << predmap[current] << "\n";
     }
-
-    std::cout << "Path from #" << start_vertex << " to #" << end_vertex << ": ";
     std::copy(path.begin(), path.end(), std::ostream_iterator<VD>(std::cout, ", "));
-
-    std::cout << end_vertex << "\n";
   }
 
 
   std::vector <ServersGraph::vertex_descriptor> pr_map(boost::num_vertices(G));
   std::vector <double>                   dist_map(boost::num_vertices(G));
 
-  for (auto vd : boost::make_iterator_range(boost::vertices(G)))
-  {
-    std::cout << "distance(" << vd << ") = " << dist_map[vd] << ", ";
-    std::cout << "parent(" << vd << ") = " << pr_map[vd] << std::endl;
-  }
+  //for (auto vd : boost::make_iterator_range(boost::vertices(G)))
+  //{
+  //  std::cout << "distance(" << vd << ") = " << dist_map[vd] << ", ";
+  //  std::cout << "parent(" << vd << ") = " << pr_map[vd] << std::endl;
+  //}
 
 
   //slize to print out current index of vertex
-  unsigned int slize = 2 * nodes_count + 1;
+  size_t slize = 2 * nodes_count + 1;
 
   std::map <int, std::vector < std::pair <std::string, std::string> >> actual_pathes;
   std::vector < std::pair <std::string, std::string> > _buf_pairs;
@@ -214,13 +193,6 @@ void GraphMapper::get_shortest_path()
     //store all finded pathes to public map
     _buf_pairs.push_back(std::make_pair(G[u].server_name, G[v].server_name));
     actual_pathes.insert({ G[e].qkd_key, _buf_pairs });
-
-    std::cout << G[u].server_name
-      << "\t(" << (u - slize)
-      << ")\t" << "\t-->\t"
-      << G[v].server_name
-      << "\t(" << (v - slize) << ")\t"
-      << " [" << G[e].qkd_key << "] " << "\n";
 
     //write into stringstream evaluated data as graphiz syntax string
     graph_stream << G[u].server_name << " -> " << G[v].server_name << "[label=\"" << G[e].qkd_key << "\"";

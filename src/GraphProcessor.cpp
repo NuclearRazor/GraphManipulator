@@ -32,7 +32,7 @@ std::string GraphProcessor::serialize_graph(const std::vector <int>& _payload)
         task_generate.join();
     }
 
-    std::unique_ptr<GraphMapper> UGraphMapper = std::make_unique<GraphMapper>(std::ref(_buf_servers_data));
+    std::unique_ptr<GraphMapper> UGraphMapper = std::make_unique<GraphMapper>(std::move(_buf_servers_data));
     std::thread task_processpath([&] { UGraphMapper->get_shortest_path(); });
 
     if (task_processpath.joinable())

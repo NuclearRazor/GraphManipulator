@@ -58,17 +58,11 @@ WSServer::WSServer(const unsigned int port)
 //set parameters of graph as int values into vector of int's
 void WSServer::update_payload(char *message, size_t length)
 {
-  std::cout << "update_payload WSSERVER\n";
   using json = nlohmann::json;
 
   try
   {
       json json_obj = json::parse(std::string(message, length));
-
-      std::cout << json_obj["matrix_dim"] << "\n";
-      std::cout << json_obj["characters_length"] << "\n";
-      std::cout << json_obj["metrics"] << "\n";
-
       payload_data[0] = int(json_obj["matrix_dim"]);
       payload_data[1] = int(json_obj["characters_length"]);
       payload_data[2] = int(json_obj["metrics"]);

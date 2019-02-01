@@ -74,7 +74,7 @@ public:
 
   GraphMapper() = default;
   ~GraphMapper() = default;
-  GraphMapper(std::map <int, std::vector <std::pair <std::string, std::string>>> &servers_data);
+  GraphMapper(const std::map <int, std::vector <std::pair <std::string, std::string>>> &&servers_data);
   GraphMapper(GraphMapper &&) = delete;
   GraphMapper(const GraphMapper&) = delete;
   GraphMapper& operator=(const GraphMapper&) = delete;
