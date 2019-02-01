@@ -29,4 +29,4 @@ script:
   - export CC=/usr/bin/gcc-6
   - export CXX=/usr/bin/g++-6
   - gcc -v && g++ -v && cmake --version
-  - cmake -DCMAKE_BUILD_TYPE=release cmake -DLIBUV_ROOT_DIR=/usr/include/libuv -DOPENSSL_ROOT_DIR=/usr/include/ssl -DBOOST_ROOT=/usr/include/boost
+  - cmake .. -DCMAKE_BUILD_TYPE=release cmake -DLIBUV_ROOT_DIR=/usr/include/libuv -DOPENSSL_ROOT_DIR=/usr/include/ssl -DBOOST_ROOT=/usr/include/boost
