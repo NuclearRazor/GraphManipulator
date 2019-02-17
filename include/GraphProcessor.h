@@ -12,7 +12,6 @@ public:
     GraphProcessor& operator =(GraphProcessor &&) = delete;
 
     std::string serialize_graph(const std::vector <int>& _payload);
-
 };
 
 #endif

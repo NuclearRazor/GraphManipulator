@@ -4,7 +4,7 @@
 #include "../include/GraphMapper.h"
 
 
-GraphMapper::GraphMapper(const std::map <int, std::vector <std::pair <std::string, std::string>>> &&servers_data)
+GraphMapper::GraphMapper(const graphPayload &&servers_data)
 {
   //passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
   this->table_of_pathes = servers_data;
@@ -21,7 +21,7 @@ void GraphMapper::get_shortest_path()
   //GRAPH COUNT OF VERTECIES SIMILAR TO 2*nodes_count
   ServersGraph G(2 * nodes_count + 1);
 
-  std::map < int, std::vector < std::pair <std::string, std::string> > >::iterator it_table_data;
+  graphPayload::iterator it_table_data;
 
   //counter to indexing G
   unsigned it_graph = 0;
@@ -74,26 +74,6 @@ void GraphMapper::get_shortest_path()
 
   }
 
-  //for (unsigned int l = 0; l < 2 * nodes_count; ++l)
-  //{
-  //  ServersGraph::out_edge_iterator eit, eend;
-
-  //  std::tie(eit, eend) = boost::out_edges(2 * nodes_count + l, G);
-
-  //  std::for_each(eit, eend, [&G](ServersGraph::edge_descriptor it)
-  //  {
-
-  //    std::cout << G[boost::target(it, G)].server_name << "\t_____________\t" << G[boost::source(it, G)].server_name
-  //      << "\t<--->\t" << " [" << G[it].edge_name << "] - [" << G[it].qkd_key << "]" << "\n";
-
-  //    std::cout << "\n";
-
-  //  }
-  //  );
-
-  //}
-
-
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
   typedef boost::graph_traits < ServersGraph >::vertex_iterator Viter;
@@ -112,7 +92,6 @@ void GraphMapper::get_shortest_path()
   {
       throw std::runtime_error("Cannot get value of first vertex");
   }
-
 
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
   typedef int Weight;
@@ -181,7 +160,7 @@ void GraphMapper::get_shortest_path()
   //slize to print out current index of vertex
   size_t slize = 2 * nodes_count + 1;
 
-  std::map <int, std::vector < std::pair <std::string, std::string> >> actual_pathes;
+  graphPayload actual_pathes;
   std::vector < std::pair <std::string, std::string> > _buf_pairs;
 
   //print out path table and store it to .dot file
@@ -213,7 +192,7 @@ void GraphMapper::get_shortest_path()
 }
 
 
-std::map< int, std::vector < std::pair <std::string, std::string> > >
+graphPayload
 GraphMapper::get_actual_table()
 {
   return actual_pathes;

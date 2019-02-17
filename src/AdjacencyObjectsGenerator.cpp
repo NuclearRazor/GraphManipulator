@@ -13,8 +13,7 @@ AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
   this->metric_dimension = (_metric_dim > 0) && (_metric_dim < 10) ? _metric_dim : 5;
 }
 
-std::map <int, std::vector < std::pair <std::string, std::string> >>
-AdjacencyObjectsGenerator::generate_data()
+graphPayload AdjacencyObjectsGenerator::generate_data()
 {
 
   //lambda to generate random metrics
@@ -111,7 +110,7 @@ AdjacencyObjectsGenerator::generate_data()
   /*-------------------GENERATE KEY FOR EACH NODE/PAIR START----------------------*/
 
   std::pair <std::string, std::string>  servers_pair;
-  std::map < int, std::vector < std::pair <std::string, std::string> > > servers_data;
+  graphPayload servers_data;
 
   for (auto &s_node : ps)
   {
@@ -125,8 +124,7 @@ AdjacencyObjectsGenerator::generate_data()
 }
 
 
-std::map <int, std::vector < std::pair <std::string, std::string> >>
-AdjacencyObjectsGenerator::get_adjency_objects()
+graphPayload AdjacencyObjectsGenerator::get_adjency_objects()
 {
   return generate_data();
 }
