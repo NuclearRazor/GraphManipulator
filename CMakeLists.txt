@@ -7,6 +7,8 @@ add_subdirectory(./uwebsockets)
 if(MSVC)
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /EHsc" )
 	#set( CMAKE_VS_PLATFORM_TOOLSET "LLVM-vs2017") #if need to use llvm compiler
+else()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
 endif()
 
 project(PathMapper )

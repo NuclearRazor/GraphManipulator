@@ -10,7 +10,7 @@ This header include WSServer class methods declaration
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <uWS/uWS.h>
+#include "uWS/uWS.h"
 #include "json.hpp"
 #include <atomic>
 #include <memory>
