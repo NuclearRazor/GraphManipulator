@@ -20,9 +20,7 @@ This header include WSServer class methods declaration
 
 class WSServer final
 {
-
 public:
-
   explicit WSServer(const unsigned int port);
   WSServer(WSServer &&) = delete;
   WSServer(const WSServer&) = delete;
@@ -33,11 +31,9 @@ public:
   void call_graph_mapper();
 
 private:
-
   std::vector <int> payload_data;
   std::string graph_data;
   GraphProcessor* task_process;
-
 };
 
 

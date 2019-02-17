@@ -25,12 +25,12 @@
 #include <map>
 #include <string>
 #include <algorithm>
-
 #include <memory>
 #include <thread>
 #include <mutex>
 #include <future>
 
+typedef std::map <int, std::vector < std::pair <std::string, std::string> >> graphPayload;
 
 template <typename T, typename D>
 inline std::ostream& operator<<(std::ostream& os, 
@@ -43,9 +43,8 @@ inline std::ostream& operator<<(std::ostream& os,
 class GraphMapper final
 {
 public:
-
   //public map to store updated path table by Djkstra algorithm
-  std::map < int, std::vector < std::pair <std::string, std::string> > > actual_pathes;
+  graphPayload actual_pathes;
 
   //Vertex data structure
   struct VertexData
@@ -74,7 +73,7 @@ public:
 
   GraphMapper() = default;
   ~GraphMapper() = default;
-  GraphMapper(const std::map <int, std::vector <std::pair <std::string, std::string>>> &&servers_data);
+  GraphMapper(const graphPayload &&servers_data);
   GraphMapper(GraphMapper &&) = delete;
   GraphMapper(const GraphMapper&) = delete;
   GraphMapper& operator=(const GraphMapper&) = delete;
@@ -88,23 +87,20 @@ public:
   void get_shortest_path();
 
   //returns actual pathes table
-  std::map< int, std::vector < std::pair <std::string, std::string> > >
-  get_actual_table();
+  graphPayload get_actual_table();
 
   //returns actual graph
   std::string get_graph();
 
 private:
-
   //table of pathes
-  std::map <int, std::vector < std::pair <std::string, std::string> >> table_of_pathes;
+  graphPayload table_of_pathes;
 
   //count of nodes ("servers" pairs with key values)
   size_t nodes_count;
 
   //graph representation as string
   std::string graph_data;
-
 };
 
 #endif

@@ -23,7 +23,7 @@ std::string GraphProcessor::serialize_graph(const std::vector <int>& _payload)
     }
 
     std::unique_ptr<AdjacencyObjectsGenerator> UAdjacencyObjects = std::make_unique<AdjacencyObjectsGenerator>(_payload[1], _payload[0], _payload[2]);
-    std::map < int, std::vector <std::pair <std::string, std::string>> > _buf_servers_data;
+    graphPayload _buf_servers_data;
 
     std::thread task_generate([&] {_buf_servers_data = UAdjacencyObjects->get_adjency_objects(); });
 
