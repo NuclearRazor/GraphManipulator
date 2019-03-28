@@ -18,13 +18,22 @@ Options are:
 
 To build with CMakeLists pass library pathes to:
 
-- OpenSSL
-- Libuv
-- Boost
+- OpenSSL (1.1.0+)
+- LIBUV
+- ZLIB
+- Boost (1.67+)
+
 
 For example On Windows x64, MVS2017:
 
-cmake -DCMAKE_BUILD_TYPE=release cmake -DLIBUV_ROOT_DIR=C:/Users/ivan-/vcpkg/installed/x64-windows -DOPENSSL_ROOT_DIR=C:/OpenSSL-Win64-1.1.1/ -DBOOST_ROOT=C:/boost_1_68_0 -G "Visual Studio 15 2017 Win64" .. > log_cmake.txt 2>&1
+cmake -DCMAKE_BUILD_TYPE=release 
+-DLIBUV_ROOT_DIR=$LIBUV_PATH 
+-DZLIB_ROOT_DIR=$ZLIB_ROOT_DIR 
+-DZLIB_LIBRARY=$ZLIB_LIB_PATH 
+-DZLIB_INCLUDE_DIR=$ZLIB_INCLUDE_PATH 
+-DOPENSSL_ROOT_DIR=$OPENSSL_PATH 
+-DBOOST_ROOT=$BOOST_PATH
+-G "Visual Studio 15 2017 Win64" .. > log_cmake.txt 2>&1
 
 build target:
 

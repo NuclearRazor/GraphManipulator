@@ -1,7 +1,6 @@
-# Author: Ivan Blagopoluchnyy 2018 (c)
+# Author: Ivan Blagopoluchnyy 2019 (c)
 
-cmake_minimum_required( VERSION 3.0.2 )
-
+cmake_minimum_required(VERSION 3.0.2)
 project(uwebsockets)
 
 option(INSTALL_HEADERS "Install header files" ON)
@@ -11,7 +10,7 @@ find_package(OpenSSL REQUIRED)
 set(LIBUV_INCLUDE_DIR ${LIBUV_ROOT_DIR}/include)
 
 #set path for the root lib as -DLIBUV_ROOT_DIR
-#this solution works if libuv was installed by vcpkg (WIN32)
+#this solution works if libuv was installed for example by vcpkg (WIN32)
 if(WIN32)
 	find_library(LIBUV_STATIC_LIBRARY NAMES libuv.lib PATHS ${LIBUV_ROOT_DIR}/lib REQUIRED)
 else()
@@ -23,6 +22,7 @@ if(WIN32)
 	list(APPEND LIBUV_LIBRARIES psapi)
 	list(APPEND LIBUV_LIBRARIES userenv)
 	list(APPEND LIBUV_LIBRARIES ws2_32)
+	list(APPEND LIBUV_LIBRARIES wsock32)
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)
@@ -45,4 +45,3 @@ if(INSTALL_HEADERS)
 	file(GLOB HEADERS src/*.h)
 	install(FILES ${HEADERS} DESTINATION include/uWS)
 endif()
-

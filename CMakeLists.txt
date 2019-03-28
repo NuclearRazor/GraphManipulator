@@ -1,45 +1,49 @@
-# Author: Ivan Blagopoluchnyy 2018 (c)
+# Author: Ivan Blagopoluchnyy 2019 (c)
 
-cmake_minimum_required( VERSION 3.0.2 )
+cmake_minimum_required(VERSION 3.0.2)
+project(PathMapper)
+
+if(WIN32)
+	add_definitions(-DWINVER=0x0600)
+	add_definitions(-DUNICODE -D_UNICODE)
+endif(WIN32)
+
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 add_subdirectory(./uwebsockets)
 
-if(MSVC)
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /EHsc" )
-	#set( CMAKE_VS_PLATFORM_TOOLSET "LLVM-vs2017") #if need to use llvm compiler
-else()
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc" )
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
 endif()
 
-project(PathMapper )
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-set (PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
-set (PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
-set (MAIN_FILE ${PROJECT_SOURCE_DEFINITION_DIRECTORY}/PathMapper.cpp)
+set(BOOST_USE_STATIC_LIBS ON)
 
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(boost_USE_STATIC_LIBS ON)
-
-find_package(Boost COMPONENTS REQUIRED system filesystem graph)
+find_package(Boost COMPONENTS system filesystem graph REQUIRED)
 
 set(BOOST_USE_MULTITHREADED ON)
 set(BOOST_USE_STATIC_RUNTIME OFF)
 set(BOOST_ALL_DYN_LINK OFF)
 
 if(Boost_FOUND)
-	include_directories (SYSTEM
-					 ${PROJECT_SOURCE_DECLARATION_DIRECTORY} 
-					 ${Boost_INCLUDE_DIR}					 
-					 "${OPENSSL_ROOT_DIR}/include")
+	file(GLOB _SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+	list(APPEND _LIBS uWS ${BOOST_LIBRARIES} ${LIB_OPENSSL})
+	set (PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+	set (MAIN_FILE ${PROJECT_SOURCE_DEFINITION_DIRECTORY}/PathMapper.cpp)
+	file(GLOB _HEADERS SYSTEM  ${PROJECT_SOURCE_DIR}/include/*.h ${Boost_INCLUDE_DIR} ${OPENSSL_ROOT_DIR}/include)
 else()
 	message(FATAL_ERROR "CANNOT FIND BOOST LIBS")
-endif ()
+endif()
 
-add_executable (PathMapper ${MAIN_FILE})
-
-target_link_libraries (PathMapper
-					   uWS
-			           ${Boost_LIBRARIES} 
-					   ${LIB_OPENSSL} )
-
+set(EXECUTABLE ${PROJECT_NAME})
 					   
+include_directories(${_HEADERS} ${_LIBS}})
+add_executable(${EXECUTABLE} ${MAIN_FILE})
+target_link_libraries(${PROJECT_NAME} ${_LIBS})

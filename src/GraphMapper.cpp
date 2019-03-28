@@ -192,8 +192,7 @@ void GraphMapper::get_shortest_path()
 }
 
 
-graphPayload
-GraphMapper::get_actual_table()
+graphPayload GraphMapper::get_actual_table()
 {
   return actual_pathes;
 }

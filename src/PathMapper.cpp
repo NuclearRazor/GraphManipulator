@@ -1,6 +1,7 @@
 // PathMapper class
 // Author: Ivan Blagopoluchnyy
 
+
 #include "../src/AdjacencyObjectsGenerator.cpp"
 #include "../src/GraphMapper.cpp"
 #include "../src/GraphProcessor.cpp"
