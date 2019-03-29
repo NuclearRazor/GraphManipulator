@@ -56,10 +56,9 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   std::vector <std::string> servers_names;
 
   /*--------------------------------ADD SERVERS START------------------------------*/
-
   for (unsigned int n = 0; n < this->overall_adjency_matrix_dimension; n++)
   {
-    servers_names.push_back(generate_names()); //push random name
+    servers_names.emplace_back(generate_names()); //push random name
   }
 
   //pair them up
@@ -69,32 +68,21 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   //if i == j (node A and node B are connected)
   for (auto &it_i : servers_names)
   {
-
     std::pair <std::string, std::string> _generated_nodes;
-
     for (auto &it_j : servers_names)
     {
-
       if (it_i != it_j)
       {
-
-        int rand_num = std::rand() % 2; //[0 - A & B are not connected; 1 - A & B are connected]
-        std::cout << it_i << ": " << it_j << " = " << rand_num << "\n";
-
-        if (rand_num == 1)
+        if (std::rand()%2 == 1)
         {
           _generated_nodes = std::make_pair(it_i, it_j);
-          ps.push_back(_generated_nodes);
+          ps.emplace_back(_generated_nodes);
         }
-
       }
-
     }
-
   }
 
   /*--------------------------------ADD SERVERS END------------------------------*/
-
   //create set
   std::set <std::pair <std::string, std::string>> unique_set;
 
@@ -102,11 +90,10 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   size_t size = ps.size();
 
   //add elements of nodes to new set
-  for (unsigned i = 0; i < size; ++i) unique_set.insert(ps[i]);
+  for (unsigned i = 0; i < size; ++i) unique_set.emplace(ps[i]);
 
   //replace elements with unique nodes to vector
   ps.assign(unique_set.begin(), unique_set.end());
-
   /*-------------------GENERATE KEY FOR EACH NODE/PAIR START----------------------*/
 
   std::pair <std::string, std::string>  servers_pair;
@@ -114,11 +101,10 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
 
   for (auto &s_node : ps)
   {
-    servers_data[generate_metric()].push_back(s_node);
+    servers_data[generate_metric()].emplace_back(s_node);
   }
 
   /*--------------------GENERATE KEY FOR EACH NODE/PAIR END----------------------*/
-
 
   return servers_data;
 }

@@ -72,7 +72,7 @@ char *Hub::inflate(char *data, size_t &length, size_t maxPayload) {
 
     inflateReset(&inflationStream);
 
-    if ((err != Z_BUF_ERROR && err != Z_OK) || dynamicZlibBuffer.length() > maxPayload) {
+    if ((err != Z_BUF_ERROR && err != Z_OK) || dynamicZlibBuffer.length()> maxPayload) {
         length = 0;
         return nullptr;
     }
@@ -213,7 +213,7 @@ void Hub::connect(std::string uri, void *user, std::map<std::string, std::string
             httpSocket->httpUser = user;
 
             std::string randomKey = "x3JJHMbDL1EzLkh9GBhXDw==";
-//            for (int i = 0; i < 22; i++) {
+//            for (int i = 0; i <22; i++) {
 //                randomKey[i] = rand() %
 //            }
 

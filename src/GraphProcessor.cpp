@@ -17,11 +17,6 @@ std::string GraphProcessor::serialize_graph(const std::vector <int>& _payload)
 {
     std::lock_guard<std::mutex> guard(mtx);
 
-    for (const auto &v_el : _payload)
-    {
-        std::cout << v_el << "\n";
-    }
-
     std::unique_ptr<AdjacencyObjectsGenerator> UAdjacencyObjects = std::make_unique<AdjacencyObjectsGenerator>(_payload[1], _payload[0], _payload[2]);
     graphPayload _buf_servers_data;
 

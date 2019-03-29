@@ -76,12 +76,12 @@ void GraphMapper::get_shortest_path()
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
-  typedef boost::graph_traits < ServersGraph >::vertex_iterator Viter;
+  typedef boost::graph_traits <ServersGraph>::vertex_iterator Viter;
 
   //START POINT IN DJKSTRA ALGORITHM
   Viter initial = boost::vertices(G).first;
 
-  typedef boost::graph_traits < ServersGraph >::vertex_descriptor Vertex;
+  typedef boost::graph_traits <ServersGraph>::vertex_descriptor Vertex;
   Vertex s = 0;
 
   if(!(*initial)) 
@@ -140,37 +140,29 @@ void GraphMapper::get_shortest_path()
 
     for (VD current = end_vertex; current != G.null_vertex() && predmap[current] != current && current != start_vertex;)
     {
-      path.push_front(predmap[current]);
+      path.emplace_front(predmap[current]);
       current = predmap[current];
     }
     std::copy(path.begin(), path.end(), std::ostream_iterator<VD>(std::cout, ", "));
   }
 
-
   std::vector <ServersGraph::vertex_descriptor> pr_map(boost::num_vertices(G));
   std::vector <double>                   dist_map(boost::num_vertices(G));
-
-  //for (auto vd : boost::make_iterator_range(boost::vertices(G)))
-  //{
-  //  std::cout << "distance(" << vd << ") = " << dist_map[vd] << ", ";
-  //  std::cout << "parent(" << vd << ") = " << pr_map[vd] << std::endl;
-  //}
-
 
   //slize to print out current index of vertex
   size_t slize = 2 * nodes_count + 1;
 
   graphPayload actual_pathes;
-  std::vector < std::pair <std::string, std::string> > _buf_pairs;
+  std::vector <std::pair <std::string, std::string>> _buf_pairs;
 
   //print out path table and store it to .dot file
   for (std::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
   {
-    boost::graph_traits < ServersGraph >::edge_descriptor e = *ei;
-    boost::graph_traits < ServersGraph >::vertex_descriptor u = boost::source(e, G), v = boost::target(e, G);
+    boost::graph_traits <ServersGraph>::edge_descriptor e = *ei;
+    boost::graph_traits <ServersGraph>::vertex_descriptor u = boost::source(e, G), v = boost::target(e, G);
 
     //store all finded pathes to public map
-    _buf_pairs.push_back(std::make_pair(G[u].server_name, G[v].server_name));
+    _buf_pairs.emplace_back(std::make_pair(G[u].server_name, G[v].server_name));
     actual_pathes.insert({ G[e].qkd_key, _buf_pairs });
 
     //write into stringstream evaluated data as graphiz syntax string

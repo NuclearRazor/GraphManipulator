@@ -56,7 +56,7 @@ WSServer::WSServer(const unsigned int port)
 
 //update payload of graph parameters
 //set parameters of graph as int values into vector of int's
-void WSServer::update_payload(char *message, size_t length)
+void WSServer::update_payload(const char* const message, size_t length)
 {
   using json = nlohmann::json;
 
@@ -83,7 +83,7 @@ void WSServer::update_payload(char *message, size_t length)
 void WSServer::call_graph_mapper()
 {
     std::unique_ptr<GraphProcessor> UGraphProcessorInstance = std::make_unique<GraphProcessor>();
-    graph_data = UGraphProcessorInstance->serialize_graph(payload_data);
+    graph_data = std::move(UGraphProcessorInstance->serialize_graph(payload_data));
 }
 
 

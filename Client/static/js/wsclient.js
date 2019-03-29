@@ -122,9 +122,8 @@ function render_graph()
     var svg = document.querySelector('#graphContainer');
 
     var bbox = svg.getBBox();
-    svg.style.width = bbox.width + 100 + "px";
-    svg.style.height = bbox.height + 100 + "px";
-
+    svg.style.width = bbox.width + 50 + "px";
+    svg.style.height = bbox.height + 50 + "px";
 }
 
 
@@ -141,10 +140,8 @@ function onOptionsclick()
     {
         panel.style.display = "none";
     }
-    else
-    {
-        panel.style.display = "block";
-    }
+	
+	panel.style.display = "block";
 }
 
 /**

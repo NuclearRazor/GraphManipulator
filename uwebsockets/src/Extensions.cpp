@@ -67,7 +67,7 @@ ExtensionsParser::ExtensionsParser(const char *data, size_t length) {
             lastInteger = &clientMaxWindowBits;
             break;
         default:
-            if (token < 0 && lastInteger) {
+            if (token <0 && lastInteger) {
                 *lastInteger = -token;
             }
             break;

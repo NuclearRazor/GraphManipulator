@@ -27,7 +27,7 @@ public:
   WSServer& operator=(const WSServer&) = delete;
   ~WSServer() = default;
 
-  void update_payload(char *message, size_t length);
+  void update_payload(const char* const message, size_t length);
   void call_graph_mapper();
 
 private:

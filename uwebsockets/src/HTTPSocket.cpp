@@ -11,10 +11,10 @@ namespace uWS {
 
 // UNSAFETY NOTE: assumes *end == '\r' (might unref end pointer)
 char *getHeaders(char *buffer, char *end, Header *headers, size_t maxHeaders) {
-    for (unsigned int i = 0; i < maxHeaders; i++) {
-        for (headers->key = buffer; (*buffer != ':') & (*buffer > 32); *(buffer++) |= 32);
+    for (unsigned int i = 0; i <maxHeaders; i++) {
+        for (headers->key = buffer; (*buffer != ':') & (*buffer> 32); *(buffer++) |= 32);
         if (*buffer == '\r') {
-            if ((buffer != end) & (buffer[1] == '\n') & (i > 0)) {
+            if ((buffer != end) & (buffer[1] == '\n') & (i> 0)) {
                 headers->key = nullptr;
                 return buffer + 2;
             } else {
@@ -22,7 +22,7 @@ char *getHeaders(char *buffer, char *end, Header *headers, size_t maxHeaders) {
             }
         } else {
             headers->keyLength = (unsigned int) (buffer - headers->key);
-            for (buffer++; (*buffer == ':' || *buffer < 33) && *buffer != '\r'; buffer++);
+            for (buffer++; (*buffer == ':' || *buffer <33) && *buffer != '\r'; buffer++);
             headers->value = buffer;
             buffer = (char *) memchr(buffer, '\r', end - buffer); //for (; *buffer != '\r'; buffer++);
             if (buffer /*!= end*/ && buffer[1] == '\n') {
@@ -40,15 +40,15 @@ char *getHeaders(char *buffer, char *end, Header *headers, size_t maxHeaders) {
 // UNSAFETY NOTE: assumes 24 byte input length
 static void base64(unsigned char *src, char *dst) {
     static const char *b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    for (int i = 0; i < 18; i += 3) {
-        *dst++ = b64[(src[i] >> 2) & 63];
-        *dst++ = b64[((src[i] & 3) << 4) | ((src[i + 1] & 240) >> 4)];
-        *dst++ = b64[((src[i + 1] & 15) << 2) | ((src[i + 2] & 192) >> 6)];
+    for (int i = 0; i <18; i += 3) {
+        *dst++ = b64[(src[i]>> 2) & 63];
+        *dst++ = b64[((src[i] & 3) <<4) | ((src[i + 1] & 240)>> 4)];
+        *dst++ = b64[((src[i + 1] & 15) <<2) | ((src[i + 2] & 192)>> 6)];
         *dst++ = b64[src[i + 2] & 63];
     }
-    *dst++ = b64[(src[18] >> 2) & 63];
-    *dst++ = b64[((src[18] & 3) << 4) | ((src[19] & 240) >> 4)];
-    *dst++ = b64[((src[19] & 15) << 2)];
+    *dst++ = b64[(src[18]>> 2) & 63];
+    *dst++ = b64[((src[18] & 3) <<4) | ((src[19] & 240)>> 4)];
+    *dst++ = b64[((src[19] & 15) <<2)];
     *dst++ = '=';
 }
 
@@ -60,7 +60,7 @@ uS::Socket *HttpSocket<isServer>::onData(uS::Socket *s, char *data, size_t lengt
 
     if (httpSocket->contentLength) {
         httpSocket->missedDeadline = false;
-        if (httpSocket->contentLength >= length) {
+        if (httpSocket->contentLength>= length) {
             Group<isServer>::from(httpSocket)->httpDataHandler(httpSocket->outstandingResponsesTail, data, length, httpSocket->contentLength -= length);
             return httpSocket;
         } else {
@@ -72,7 +72,7 @@ uS::Socket *HttpSocket<isServer>::onData(uS::Socket *s, char *data, size_t lengt
     }
 
     if (FORCE_SLOW_PATH || httpSocket->httpBuffer.length()) {
-        if (httpSocket->httpBuffer.length() + length > MAX_HEADER_BUFFER_SIZE) {
+        if (httpSocket->httpBuffer.length() + length> MAX_HEADER_BUFFER_SIZE) {
             httpSocket->onEnd(httpSocket);
             return httpSocket;
         }
@@ -182,7 +182,7 @@ uS::Socket *HttpSocket<isServer>::onData(uS::Socket *s, char *data, size_t lengt
             }
         } else {
             if (!httpSocket->httpBuffer.length()) {
-                if (length > MAX_HEADER_BUFFER_SIZE) {
+                if (length> MAX_HEADER_BUFFER_SIZE) {
                     httpSocket->onEnd(httpSocket);
                 } else {
                     httpSocket->httpBuffer.append(lastCursor, end - lastCursor);
@@ -228,20 +228,20 @@ void HttpSocket<isServer>::upgrade(const char *secKey, const char *extensions, s
         base64(shaDigest, upgradeBuffer + 97);
         memcpy(upgradeBuffer + 125, "\r\n", 2);
         size_t upgradeResponseLength = 127;
-        if (extensionsResponse.length() && extensionsResponse.length() < 200) {
+        if (extensionsResponse.length() && extensionsResponse.length() <200) {
             memcpy(upgradeBuffer + upgradeResponseLength, "Sec-WebSocket-Extensions: ", 26);
             memcpy(upgradeBuffer + upgradeResponseLength + 26, extensionsResponse.data(), extensionsResponse.length());
             memcpy(upgradeBuffer + upgradeResponseLength + 26 + extensionsResponse.length(), "\r\n", 2);
             upgradeResponseLength += 26 + extensionsResponse.length() + 2;
         }
         // select first protocol
-        for (unsigned int i = 0; i < subprotocolLength; i++) {
+        for (unsigned int i = 0; i <subprotocolLength; i++) {
             if (subprotocol[i] == ',') {
                 subprotocolLength = i;
                 break;
             }
         }
-        if (subprotocolLength && subprotocolLength < 200) {
+        if (subprotocolLength && subprotocolLength <200) {
             memcpy(upgradeBuffer + upgradeResponseLength, "Sec-WebSocket-Protocol: ", 24);
             memcpy(upgradeBuffer + upgradeResponseLength + 24, subprotocol, subprotocolLength);
             memcpy(upgradeBuffer + upgradeResponseLength + 24 + subprotocolLength, "\r\n", 2);

@@ -42,7 +42,7 @@ void WebSocket<isServer>::send(const char *message, size_t length, OpCode opCode
         OpCode opCode;
         bool compress;
         WebSocket<isServer> *s;
-    } transformData = {opCode, compress && compressionStatus == WebSocket<isServer>::CompressionStatus::ENABLED && opCode < 3, this};
+    } transformData = {opCode, compress && compressionStatus == WebSocket<isServer>::CompressionStatus::ENABLED && opCode <3, this};
 
     struct WebSocketTransformer {
         static size_t estimate(const char *data, size_t length) {
@@ -95,7 +95,7 @@ typename WebSocket<isServer>::PreparedMessage *WebSocket<isServer>::prepareMessa
 {
     // should be sent in!
     size_t batchLength = 0;
-    for (size_t i = 0; i < messages.size(); i++) {
+    for (size_t i = 0; i <messages.size(); i++) {
         batchLength += messages[i].length();
     }
 
@@ -103,7 +103,7 @@ typename WebSocket<isServer>::PreparedMessage *WebSocket<isServer>::prepareMessa
     preparedMessage->buffer = new char[batchLength + 10 * messages.size()];
 
     int offset = 0;
-    for (size_t i = 0; i < messages.size(); i++) {
+    for (size_t i = 0; i <messages.size(); i++) {
         offset += WebSocketProtocol<isServer, WebSocket<isServer>>::formatMessage(preparedMessage->buffer + offset, messages[i].data(), messages[i].length(), opCode, messages[i].length(), compressed);
     }
     preparedMessage->length = offset;
@@ -322,7 +322,7 @@ bool WebSocket<isServer>::handleFragment(char *data, size_t length, unsigned int
     WebSocket<isServer> *webSocket = static_cast<WebSocket<isServer> *>(webSocketState);
     Group<isServer> *group = Group<isServer>::from(webSocket);
 
-    if (opCode < 3) {
+    if (opCode <3) {
         if (!remainingBytes && fin && !webSocket->fragmentBuffer.length()) {
             if (webSocket->compressionStatus == WebSocket<isServer>::CompressionStatus::COMPRESSED_FRAME) {
                     webSocket->compressionStatus = WebSocket<isServer>::CompressionStatus::ENABLED;

@@ -29,14 +29,14 @@ void Loop::doEpoll(int epollTimeout) {
         preCb(preCbData);
     }
 
-    for (int i = 0; i < numFdReady; i++) {
+    for (int i = 0; i <numFdReady; i++) {
         Poll *poll = (Poll *) readyEvents[i].data.ptr;
         int status = -bool(readyEvents[i].events & EPOLLERR);
         callbacks[poll->state.cbIndex](poll, status, readyEvents[i].events);
     }
 
     if (timers.size()) {
-        if (timers[0].timepoint < timepoint) {
+        if (timers[0].timepoint <timepoint) {
             do {
                 Timer *timer = timers[0].timer;
                 processingTimer = timer; // processing this timer
@@ -53,7 +53,7 @@ void Loop::doEpoll(int epollTimeout) {
                 if (repeat) {
                     timer->start(cb, repeat, repeat);
                 }
-            } while (timers.size() && timers[0].timepoint < timepoint);
+            } while (timers.size() && timers[0].timepoint <timepoint);
 
         } else { // we have a timer but it did not process, so update our next delay
             delay = std::max<int>(std::chrono::duration_cast<std::chrono::milliseconds>(timers[0].timepoint - timepoint).count(), 0);
