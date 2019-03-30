@@ -1,7 +1,7 @@
 #ifndef WSSERVER_CPP
 #define WSSERVER_CPP
 
-#include "WSServer.hpp"
+#include "wsserver.hpp"
 
 WSServer::WSServer(const unsigned int port)
 {
