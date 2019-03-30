@@ -8,7 +8,7 @@ This header include wsserver class methods definitions
 #ifndef WSSERVER_CPP
 #define WSSERVER_CPP
 
-#include "../include/WSServer.h"
+#include "WSServer.h"
 
 
 WSServer::WSServer(const unsigned int port)

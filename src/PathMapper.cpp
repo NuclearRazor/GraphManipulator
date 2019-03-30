@@ -1,18 +1,17 @@
 // PathMapper class
 // Author: Ivan Blagopoluchnyy
 
-
-#include "../src/AdjacencyObjectsGenerator.cpp"
-#include "../src/GraphMapper.cpp"
-#include "../src/GraphProcessor.cpp"
-#include "../src/WSServer.cpp"
+#include "AdjacencyObjectsGenerator.cpp"
+#include "GraphMapper.cpp"
+#include "GraphProcessor.cpp"
+#include "WSServer.cpp"
 
 template <typename T, typename D>
 inline std::ostream& operator<<(std::ostream& os, std::vector<std::pair <T, D>> &lst)
 {
   for (const auto &p: lst)
   {
-    os <<p.first <<", " <<p.second <<"\n";
+    os << p.first << ", " << p.second << "\n";
   }
 
   return os;
@@ -23,13 +22,11 @@ inline std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std:
 {
     for (const auto &m_iter: mlst)
     {
-        std::cout <<m_iter.first <<" ";
-
+        os << m_iter.first << " ";
         for (const auto &m_node: m_iter.second)
         {
-            std::cout <<m_node.first <<" " <<m_node.second <<"\n";
+            os << m_node.first << " " << m_node.second << "\n";
         }
-
     }
 
     return os;

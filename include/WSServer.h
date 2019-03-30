@@ -10,8 +10,9 @@ This header include WSServer class methods declaration
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "uWS/uWS.h"
+#include "uWS.h"
 #include "json.hpp"
+
 #include <atomic>
 #include <memory>
 #include <thread>
@@ -25,7 +26,7 @@ public:
   WSServer(WSServer &&) = delete;
   WSServer(const WSServer&) = delete;
   WSServer& operator=(const WSServer&) = delete;
-  ~WSServer() = default;
+ ~WSServer() = default;
 
   void update_payload(const char* const message, size_t length);
   void call_graph_mapper();

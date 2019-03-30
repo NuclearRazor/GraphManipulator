@@ -8,7 +8,7 @@ This header include graphprocessor class methods definitions
 #ifndef GRAPHPROCESSOR_CPP
 #define GRAPHPROCESSOR_CPP
 
-#include "../include/GraphProcessor.h"
+#include "GraphProcessor.h"
 
 
 std::mutex mtx;

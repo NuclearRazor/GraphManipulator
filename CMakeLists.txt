@@ -37,13 +37,14 @@ if(Boost_FOUND)
 	list(APPEND _LIBS uWS ${BOOST_LIBRARIES} ${LIB_OPENSSL})
 	set (PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 	set (MAIN_FILE ${PROJECT_SOURCE_DEFINITION_DIRECTORY}/PathMapper.cpp)
-	file(GLOB _HEADERS SYSTEM  ${PROJECT_SOURCE_DIR}/include/*.h ${Boost_INCLUDE_DIR} ${OPENSSL_ROOT_DIR}/include)
+	file(GLOB _HEADERS SYSTEM  ${PROJECT_SOURCE_DIR}/include "./uwebsockets/src" ${Boost_INCLUDE_DIR} ${OPENSSL_ROOT_DIR}/include)
 else()
 	message(FATAL_ERROR "CANNOT FIND BOOST LIBS")
 endif()
 
 set(EXECUTABLE ${PROJECT_NAME})
-					   
-include_directories(${_HEADERS} ${_LIBS}})
+SET(BASEPATH "${CMAKE_SOURCE_DIR}")
+
+include_directories(${_HEADERS} ${BASEPATH} ${PROJECT_SOURCE_DIR} ${_LIBS}})
 add_executable(${EXECUTABLE} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} ${_LIBS})

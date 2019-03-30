@@ -1,7 +1,7 @@
 #ifndef PATHMAPPER_CPP
 #define PATHMAPPER_CPP
 
-#include "../include/GraphMapper.h"
+#include "GraphMapper.h"
 
 
 GraphMapper::GraphMapper(const graphPayload &&servers_data)

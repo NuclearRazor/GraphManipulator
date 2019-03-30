@@ -1,7 +1,7 @@
 #ifndef ADJOBJGEN_H
 #define ADJOBJGEN_H
 
-#include "../include/GraphMapper.h"
+#include "GraphMapper.h"
 
 class AdjacencyObjectsGenerator final
 {
@@ -20,7 +20,7 @@ public:
   returns map, where stored generated servers info
 
   */
-  //O(log(n)) medium lookup
+  //O(log(n)) average lookup
   graphPayload generate_data();
 
   /*

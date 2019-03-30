@@ -1,7 +1,7 @@
 #ifndef ADJOBJGEN_CPP
 #define ADJOBJGEN_CPP
 
-#include "../include/AdjacencyObjectsGenerator.h"
+#include "AdjacencyObjectsGenerator.h"
 
 AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
   const int _adjency_matrix_dim,
