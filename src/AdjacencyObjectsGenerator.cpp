@@ -1,25 +1,23 @@
 #ifndef ADJOBJGEN_CPP
 #define ADJOBJGEN_CPP
 
-#include "AdjacencyObjectsGenerator.h"
+#include "AdjacencyObjectsGenerator.hpp"
 
 AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
   const int _adjency_matrix_dim,
   const int _char_dim,
   const int _metric_dim)
 {
-  this->overall_adjency_matrix_dimension = (_adjency_matrix_dim > 1) ? _adjency_matrix_dim : 2;
-  this->characters_dimension = (_char_dim > 0) ? _char_dim : 3;
-  this->metric_dimension = (_metric_dim > 0) && (_metric_dim < 10) ? _metric_dim : 5;
+  overall_adjency_matrix_dimension = (_adjency_matrix_dim > 1) ? _adjency_matrix_dim : 2;
+  characters_dimension = (_char_dim > 0) ? _char_dim : 3;
+  metric_dimension = (_metric_dim > 0) && (_metric_dim < 10) ? _metric_dim : 5;
 }
 
 graphPayload AdjacencyObjectsGenerator::generate_data()
 {
-
-  //lambda to generate random metrics
+  //generate random metrics
   auto generate_metric = [&]()
   {
-
     //data, where from get characters to generate quazi random metric
     std::string metrics_chars("1234567890");
     std::random_device rng;
@@ -31,15 +29,14 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
     for (unsigned int i = 0; i < metric_dimension; ++i) { _buf += metrics_chars[index_dist(rng)]; }
 
     //string literals to integer scalars
-    int int_metric = std::stoi(_buf);
+    const int int_metric = std::stoi(_buf);
 
     return int_metric;
   };
 
-  //lambda to generate random Names
+  //generate random names
   auto generate_names = [&]()
   {
-
     //data, where from get characters to generate quazi random metric
     std::string names_chars("ABCDEFGHGKLMNOPQRSTUZWY");
     std::random_device rng;
@@ -55,7 +52,7 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   //create vector to store names of servers
   std::vector <std::string> servers_names;
 
-  /*--------------------------------ADD SERVERS START------------------------------*/
+  /*---------------------------ADD SERVERS START-----------------------------*/
   for (unsigned int n = 0; n < this->overall_adjency_matrix_dimension; n++)
   {
     servers_names.emplace_back(generate_names()); //push random name
@@ -82,19 +79,19 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
     }
   }
 
-  /*--------------------------------ADD SERVERS END------------------------------*/
+  /*-----------------------------ADD SERVERS END------------------------------*/
   //create set
   std::set <std::pair <std::string, std::string>> unique_set;
 
   //get vector size fof adjacency nodes pairs
-  size_t size = ps.size();
+  const size_t size = ps.size();
 
   //add elements of nodes to new set
   for (unsigned i = 0; i < size; ++i) unique_set.emplace(ps[i]);
 
   //replace elements with unique nodes to vector
   ps.assign(unique_set.begin(), unique_set.end());
-  /*-------------------GENERATE KEY FOR EACH NODE/PAIR START----------------------*/
+  /*--------------------GENERATE KEY FOR EACH NODE/PAIR START------------------*/
 
   std::pair <std::string, std::string>  servers_pair;
   graphPayload servers_data;
@@ -105,7 +102,6 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   }
 
   /*--------------------GENERATE KEY FOR EACH NODE/PAIR END----------------------*/
-
   return servers_data;
 }
 
@@ -115,4 +111,4 @@ graphPayload AdjacencyObjectsGenerator::get_adjency_objects()
   return generate_data();
 }
 
-#endif
+#endif //ADJOBJGEN_CPP

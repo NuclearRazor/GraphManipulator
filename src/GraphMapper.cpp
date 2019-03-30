@@ -1,16 +1,15 @@
-#ifndef PATHMAPPER_CPP
-#define PATHMAPPER_CPP
+#ifndef GRAPHMAPPER_CPP
+#define GRAPHMAPPER_CPP
 
-#include "GraphMapper.h"
-
+#include "GraphMapper.hpp"
 
 GraphMapper::GraphMapper(const graphPayload &&servers_data)
 {
   //passed (or generated) servers names and it's weights of nodes assign to private member of class - table of pathes
-  this->table_of_pathes = servers_data;
+  table_of_pathes = servers_data;
 
   //count of nodes it is a count of pairs
-  this->nodes_count = servers_data.size();
+  nodes_count = servers_data.size();
 }
 
 void GraphMapper::get_shortest_path()
@@ -29,14 +28,10 @@ void GraphMapper::get_shortest_path()
   //iterate over table data to translate servers nodes to vertecies and edges
   for (auto &it_table_data : table_of_pathes)
   {
-
       auto path_node = it_table_data.second;
 
-      /*
-      fill each edge (k)
-      with first vertex (i) and second (i + 1)
-      and assign to the current edge weight, that was generated
-      */
+      //fill each edge (k) with first vertex (i) and second (i + 1)
+      //and assign to the current edge weight, that was generated
       for (auto &s_node : path_node)
       {
           //add vertex name (i) - server name
@@ -69,40 +64,24 @@ void GraphMapper::get_shortest_path()
 
           //increase iterator to get next vertex to filling data
           ++it_graph;
-
       }
-
   }
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
   typedef boost::graph_traits <ServersGraph>::vertex_iterator Viter;
-
-  //START POINT IN DJKSTRA ALGORITHM
-  Viter initial = boost::vertices(G).first;
-
   typedef boost::graph_traits <ServersGraph>::vertex_descriptor Vertex;
-  Vertex s = 0;
-
-  if(!(*initial)) 
-  {
-      Vertex s = *initial;
-  }
-  else
-  {
-      throw std::runtime_error("Cannot get value of first vertex");
-  }
 
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
   typedef int Weight;
   std::vector <Weight> distances(boost::num_vertices(G)); // store distances
 
-  if (!(s))
-      std::cout << "Warning: initial vertex is equal zero\n";
-
   //[1] parameter -> graph
   //[2] parameter -> start point (selected vertex)
   //[3] parameter -> graph map properties
+
+  //START POINT IN DJKSTRA ALGORITHM
+  Vertex s = 0;
 
   //create automatically propery map by boost iterator
   //https://svn.boost.org/trac10/changeset/82439
@@ -147,10 +126,7 @@ void GraphMapper::get_shortest_path()
   }
 
   std::vector <ServersGraph::vertex_descriptor> pr_map(boost::num_vertices(G));
-  std::vector <double>                   dist_map(boost::num_vertices(G));
-
-  //slize to print out current index of vertex
-  size_t slize = 2 * nodes_count + 1;
+  std::vector <double> dist_map(boost::num_vertices(G));
 
   graphPayload actual_pathes;
   std::vector <std::pair <std::string, std::string>> _buf_pairs;
@@ -195,5 +171,4 @@ std::string GraphMapper::get_graph()
   return graph_data;
 }
 
-
-#endif
+#endif // GRAPHMAPPER_CPP

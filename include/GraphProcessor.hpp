@@ -1,5 +1,5 @@
-#ifndef GRAPHPROCESSOR_H
-#define GRAPHPROCESSOR_H
+#ifndef GRAPHPROCESSOR_HPP
+#define GRAPHPROCESSOR_HPP
 
 class GraphProcessor final
 {
@@ -11,7 +11,7 @@ public:
     GraphProcessor& operator =(const GraphProcessor &) = delete;
     GraphProcessor& operator =(GraphProcessor &&) = delete;
 
-    std::string serialize_graph(const std::vector <int>& _payload);
+    std::string serialize_graph(const std::vector <int>&& _payload);
 };
 
-#endif
+#endif //GRAPHPROCESSOR_HPP

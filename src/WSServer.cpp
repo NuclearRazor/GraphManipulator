@@ -1,15 +1,7 @@
-//WSServer.cpp
-/*
-
-This header include wsserver class methods definitions
-
-*/
-
 #ifndef WSSERVER_CPP
 #define WSSERVER_CPP
 
-#include "WSServer.h"
-
+#include "WSServer.hpp"
 
 WSServer::WSServer(const unsigned int port)
 {
@@ -27,7 +19,7 @@ WSServer::WSServer(const unsigned int port)
     //process on items by lambdas
     h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode)
     {
-      this->update_payload(msg, length);
+      update_payload(msg, length);
       ws->send(graph_data.c_str(), graph_data.length(), opCode);
     });
 
@@ -53,7 +45,6 @@ WSServer::WSServer(const unsigned int port)
 
 }
 
-
 //update payload of graph parameters
 //set parameters of graph as int values into vector of int's
 void WSServer::update_payload(const char* const message, size_t length)
@@ -67,7 +58,7 @@ void WSServer::update_payload(const char* const message, size_t length)
       payload_data[1] = int(json_obj["characters_length"]);
       payload_data[2] = int(json_obj["metrics"]);
 
-      this->call_graph_mapper();
+      call_graph_mapper();
 
   }
   catch (...)
@@ -77,14 +68,12 @@ void WSServer::update_payload(const char* const message, size_t length)
 
 }
 
-
 //input: graph options - scalars of int's
 //output: graph as std::string object
 void WSServer::call_graph_mapper()
 {
     std::unique_ptr<GraphProcessor> UGraphProcessorInstance = std::make_unique<GraphProcessor>();
-    graph_data = std::move(UGraphProcessorInstance->serialize_graph(payload_data));
+    graph_data = std::move(UGraphProcessorInstance->serialize_graph(std::move(payload_data)));
 }
 
-
-#endif
+#endif //WSSERVER_CPP

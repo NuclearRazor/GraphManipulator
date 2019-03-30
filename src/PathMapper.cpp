@@ -1,5 +1,5 @@
-// PathMapper class
 // Author: Ivan Blagopoluchnyy
+// PathMapper class
 
 #include "AdjacencyObjectsGenerator.cpp"
 #include "GraphMapper.cpp"

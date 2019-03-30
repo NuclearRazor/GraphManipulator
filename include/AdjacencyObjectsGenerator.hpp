@@ -1,7 +1,7 @@
-#ifndef ADJOBJGEN_H
-#define ADJOBJGEN_H
+#ifndef ADJOBJGEN_HPP
+#define ADJOBJGEN_HPP
 
-#include "GraphMapper.h"
+#include "GraphMapper.hpp"
 
 class AdjacencyObjectsGenerator final
 {
@@ -15,26 +15,19 @@ public:
   AdjacencyObjectsGenerator(const AdjacencyObjectsGenerator&) = default;
   AdjacencyObjectsGenerator& operator=(const AdjacencyObjectsGenerator&) = default;
 
-  /*
-
-  returns map, where stored generated servers info
-
-  */
+  //returns map, where stored generated servers info
   //O(log(n)) average lookup
   graphPayload generate_data();
 
-  /*
-
-  returns map, where stored generated adjency objects
-
-  */
+  //returns map, where stored generated adjency objects
   //O(log(n)) lookup
   graphPayload get_adjency_objects();
 
 private:
-  unsigned int overall_adjency_matrix_dimension = 2; //minimum count of objects set - 2 - see non empty constructor
+  //minimum count of objects set - 2 - see non empty constructor
+  unsigned int overall_adjency_matrix_dimension = 2;
   unsigned int characters_dimension = 3;
   unsigned int metric_dimension = 5;
 };
 
-#endif
+#endif //ADJOBJGEN_HPP

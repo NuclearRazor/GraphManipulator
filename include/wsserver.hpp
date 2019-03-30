@@ -1,14 +1,5 @@
-//wsserver.h
-/*
-
-This header include WSServer class methods declaration
-
-*/
-
-#ifndef WSSERVER_H
-#define WSSERVER_H
-
-#define _CRT_SECURE_NO_WARNINGS
+#ifndef WSSERVER_HPP
+#define WSSERVER_HPP
 
 #include "uWS.h"
 #include "json.hpp"
@@ -37,5 +28,4 @@ private:
   GraphProcessor* task_process;
 };
 
-
-#endif
+#endif //WSSERVER_HPP

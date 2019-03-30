@@ -1,19 +1,11 @@
-//GraphProcessor.cpp
-/*
-
-This header include graphprocessor class methods definitions
-
-*/
-
 #ifndef GRAPHPROCESSOR_CPP
 #define GRAPHPROCESSOR_CPP
 
-#include "GraphProcessor.h"
-
+#include "GraphProcessor.hpp"
 
 std::mutex mtx;
 
-std::string GraphProcessor::serialize_graph(const std::vector <int>& _payload)
+std::string GraphProcessor::serialize_graph(const std::vector <int>&& _payload)
 {
     std::lock_guard<std::mutex> guard(mtx);
 

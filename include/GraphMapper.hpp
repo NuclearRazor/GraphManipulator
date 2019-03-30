@@ -1,5 +1,5 @@
-#ifndef PATHMAPPER_H
-#define PATHMAPPER_H
+#ifndef GRAPHMAPPER_HPP
+#define GRAPHMAPPER_HPP
 
 #define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
 
@@ -30,7 +30,7 @@
 #include <mutex>
 #include <future>
 
-typedef std::map <int, std::vector < std::pair <std::string, std::string> >> graphPayload;
+typedef std::map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
 
 template <typename T, typename D>
 inline std::ostream& operator<<(std::ostream& os, 
@@ -43,8 +43,6 @@ inline std::ostream& operator<<(std::ostream& os,
 class GraphMapper final
 {
 public:
-  //public map to store updated path table by Djkstra algorithm
-  graphPayload actual_pathes;
 
   //Vertex data structure
   struct VertexData
@@ -53,14 +51,12 @@ public:
     int server_key;
   };
 
-
   //edges data structure
   struct EdgeData
   {
     std::string edge_name;
     int qkd_key;
   };
-
 
   //Servers graph
   typedef boost::adjacency_list<
@@ -78,12 +74,8 @@ public:
   GraphMapper(const GraphMapper&) = delete;
   GraphMapper& operator=(const GraphMapper&) = delete;
 
-  /*
-
-  Method use Djkstra algorithm with positive QKD keys as weights and:
-  show path table, generated dot file of graph
-
-  */
+  //use Djkstra algorithm with positive QKD keys as weights and:
+  //show path table, generated dot file of graph
   void get_shortest_path();
 
   //returns actual pathes table
@@ -93,6 +85,9 @@ public:
   std::string get_graph();
 
 private:
+  //public map to store updated path table by Djkstra algorithm
+  graphPayload actual_pathes;
+
   //table of pathes
   graphPayload table_of_pathes;
 
@@ -103,4 +98,4 @@ private:
   std::string graph_data;
 };
 
-#endif
+#endif //GRAPHMAPPER_HPP
