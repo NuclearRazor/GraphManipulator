@@ -37,10 +37,7 @@ cmake -DCMAKE_BUILD_TYPE=release
 
 In all cases, average errors connected with OPENSSL version and it might be errors for export symbols in uWS.lib like:
 
-076 00000000 UNDEF notype () External | SSL_CTX_set_options 
-077 00000000 UNDEF notype () External | SSL_CTX_new 
-078 00000000 UNDEF notype () External | SSL_CTX_up_ref 
-079 00000000 UNDEF notype () External | SSL_CTX_free 
+076 00000000 UNDEF notype () External | SSL_CTX_set_options
 
 Check your OPENSSL version.
 
@@ -48,7 +45,7 @@ build target:
 
 cmake --build . --target PathMapper --config release > log_build.txt 2>&1
 
-**UI (design) side was implemented by**:
+**UI side was implemented by**:
 
 - HTML, CSS, bootstrap (3.3.7)
 
