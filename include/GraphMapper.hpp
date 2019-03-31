@@ -23,12 +23,10 @@
 #include <random>
 #include <vector>
 #include <map>
-#include <string>
 #include <algorithm>
 #include <memory>
 #include <thread>
 #include <mutex>
-#include <future>
 
 typedef std::map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
 

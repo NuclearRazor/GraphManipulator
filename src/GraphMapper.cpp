@@ -69,7 +69,6 @@ void GraphMapper::get_shortest_path()
 
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
-  typedef boost::graph_traits <ServersGraph>::vertex_iterator Viter;
   typedef boost::graph_traits <ServersGraph>::vertex_descriptor Vertex;
 
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
@@ -159,12 +158,10 @@ void GraphMapper::get_shortest_path()
 
 }
 
-
 graphPayload GraphMapper::get_actual_table()
 {
   return actual_pathes;
 }
-
 
 std::string GraphMapper::get_graph()
 {
