@@ -158,12 +158,12 @@ void GraphMapper::get_shortest_path()
 
 }
 
-graphPayload GraphMapper::get_actual_table()
+const graphPayload GraphMapper::get_actual_table()
 {
   return actual_pathes;
 }
 
-std::string GraphMapper::get_graph()
+const std::string GraphMapper::get_graph()
 {
   return graph_data;
 }

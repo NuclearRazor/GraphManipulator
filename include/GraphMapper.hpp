@@ -77,10 +77,10 @@ public:
   void get_shortest_path();
 
   //returns actual pathes table
-  graphPayload get_actual_table();
+  const graphPayload get_actual_table();
 
   //returns actual graph
-  std::string get_graph();
+  const std::string get_graph();
 
 private:
   //public map to store updated path table by Djkstra algorithm
