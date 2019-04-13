@@ -24,6 +24,8 @@ public:
 
 private:
   std::vector <int> payload_data;
+  typedef nlohmann::json::const_iterator msg_it;
+  typedef std::vector <int>::iterator payload_it;
   std::string graph_data;
   GraphProcessor* task_process;
 };
