@@ -1,7 +1,7 @@
 #ifndef GRAPHPROCESSOR_CPP
 #define GRAPHPROCESSOR_CPP
 
-#include "GraphProcessor.hpp"
+#include <GraphProcessor.hpp>
 
 std::mutex mtx;
 

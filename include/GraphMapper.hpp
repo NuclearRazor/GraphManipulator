@@ -22,13 +22,13 @@
 #include <numeric>
 #include <random>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <memory>
 #include <thread>
 #include <mutex>
 
-typedef std::map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
+typedef std::unordered_map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
 
 template <typename T, typename D>
 inline std::ostream& operator<<(std::ostream& os, 
@@ -36,7 +36,7 @@ inline std::ostream& operator<<(std::ostream& os,
 
 template <typename K, typename P, typename S>
 inline std::ostream& operator<<(std::ostream& os, 
-    std::map <K, std::vector <std::pair <P, S>>> &mlst);
+    std::unordered_map <K, std::vector <std::pair <P, S>>> &mlst);
 
 class GraphMapper final
 {
@@ -60,7 +60,7 @@ public:
   typedef boost::adjacency_list<
     boost::vecS,
     boost::vecS,
-    boost::undirectedS, //undirected graph
+    boost::directedS, //undirected graph
     VertexData, //storage mechanism to store vertex properties
     boost::property<boost::edge_weight_t, int, EdgeData> //boost::property<boost::edge_weight_t, int>
   > ServersGraph;

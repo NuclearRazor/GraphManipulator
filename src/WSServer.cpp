@@ -1,13 +1,10 @@
 #ifndef WSSERVER_CPP
 #define WSSERVER_CPP
 
-#include "wsserver.hpp"
+#include <wsserver.hpp>
 
 WSServer::WSServer(const unsigned int port)
 {
-  //resize vector with 3 elements as graph options parameters
-  payload_data.resize(3);
-
   uWS::Hub h;
 
   //listen port 
@@ -54,7 +51,9 @@ void WSServer::update_payload(const char* const message, size_t length)
   {
       nlohmann::json json_obj = nlohmann::json::parse(std::string(message, length));
 
-      payload_data.reserve(json_obj.size());
+      //resize vector with 3 elements as graph options parameters
+      payload_data.reserve(json_obj.size()); //allocate
+      payload_data.resize(json_obj.size()); //make constant container size
 
       for (std::pair<msg_it, payload_it> i(json_obj.cbegin(), payload_data.begin());
           i.first != json_obj.end()  && i.second != payload_data.end();

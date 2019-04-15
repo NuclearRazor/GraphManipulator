@@ -1,7 +1,7 @@
 #ifndef ADJOBJGEN_HPP
 #define ADJOBJGEN_HPP
 
-#include "GraphMapper.hpp"
+#include <GraphMapper.hpp>
 
 class AdjacencyObjectsGenerator final
 {
@@ -25,9 +25,9 @@ public:
 
 private:
   //minimum count of objects set - 2 - see non empty constructor
-  unsigned int overall_adjency_matrix_dimension = 2;
-  unsigned int characters_dimension = 3;
-  unsigned int metric_dimension = 5;
+  unsigned int overall_adjency_matrix_dimension = 0;
+  unsigned int characters_dimension = 0;
+  unsigned int metric_dimension = 0;
 };
 
 #endif //ADJOBJGEN_HPP

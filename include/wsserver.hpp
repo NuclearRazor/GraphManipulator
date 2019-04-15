@@ -1,8 +1,8 @@
 #ifndef WSSERVER_HPP
 #define WSSERVER_HPP
 
-#include "uWS.h"
-#include "json.hpp"
+#include <uWS.h>
+#include <json.hpp>
 
 #include <atomic>
 #include <memory>

@@ -18,7 +18,7 @@ inline std::ostream& operator<<(std::ostream& os, std::vector<std::pair <T, D>> 
 }
 
 template <typename K, typename P, typename S>
-inline std::ostream& operator<<(std::ostream& os, std::map <K, std::vector <std::pair <P, S>>> &mlst)
+inline std::ostream& operator<<(std::ostream& os, std::unordered_map <K, std::vector <std::pair <P, S>>> &mlst)
 {
     for (const auto &m_iter: mlst)
     {

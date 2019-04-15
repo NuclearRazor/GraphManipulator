@@ -1,7 +1,7 @@
 #ifndef GRAPHMAPPER_CPP
 #define GRAPHMAPPER_CPP
 
-#include "GraphMapper.hpp"
+#include <GraphMapper.hpp>
 
 GraphMapper::GraphMapper(const graphPayload &&servers_data)
 {
@@ -19,8 +19,6 @@ void GraphMapper::get_shortest_path()
 
   //GRAPH COUNT OF VERTECIES SIMILAR TO 2*nodes_count
   ServersGraph G(2 * nodes_count + 1);
-
-  graphPayload::iterator it_table_data;
 
   //counter to indexing G
   unsigned it_graph = 0;
@@ -70,8 +68,8 @@ void GraphMapper::get_shortest_path()
   /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
 
   typedef boost::graph_traits <ServersGraph>::vertex_descriptor Vertex;
-
   std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
+
   typedef int Weight;
   std::vector <Weight> distances(boost::num_vertices(G)); // store distances
 
@@ -80,7 +78,7 @@ void GraphMapper::get_shortest_path()
   //[3] parameter -> graph map properties
 
   //START POINT IN DJKSTRA ALGORITHM
-  Vertex s = 0;
+  Vertex s = boost::vertex(0, G);
 
   //create automatically propery map by boost iterator
   //https://svn.boost.org/trac10/changeset/82439
@@ -95,10 +93,7 @@ void GraphMapper::get_shortest_path()
       << "  rankdir=LR\n"
       << "  size=\"4,3\"\n"
       << "  ratio=\"fill\"\n"
-      << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
-
-  //store vertices integer indexes
-  std::vector <Vertex> p(boost::num_vertices(G));
+      << "  edge[dir=\"none\", style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
   boost::graph_traits <ServersGraph>::edge_iterator ei, ei_end;
 
@@ -119,6 +114,9 @@ void GraphMapper::get_shortest_path()
     for (VD current = end_vertex; current != G.null_vertex() && predmap[current] != current && current != start_vertex;)
     {
       path.emplace_front(predmap[current]);
+
+      std::cout << "distance: " << distance << "\n";
+
       current = predmap[current];
     }
     std::copy(path.begin(), path.end(), std::ostream_iterator<VD>(std::cout, ", "));
@@ -140,10 +138,10 @@ void GraphMapper::get_shortest_path()
     _buf_pairs.emplace_back(std::make_pair(G[u].server_name, G[v].server_name));
     actual_pathes.insert({ G[e].qkd_key, _buf_pairs });
 
-    //write into stringstream evaluated data as graphiz syntax string
+    //write into stringstream evaluated data as graphviz syntax string
     graph_stream << G[u].server_name << " -> " << G[v].server_name << "[label=\"" << G[e].qkd_key << "\"";
 
-    if (p[v] == u)
+    if (predecessors[v] == u)
         graph_stream << ", color=\"black\"";
     else
         graph_stream << ", color=\"blue\"";
