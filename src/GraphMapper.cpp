@@ -15,145 +15,141 @@ GraphMapper::GraphMapper(const graphPayload &&servers_data)
 void GraphMapper::get_shortest_path()
 {
 
-  /*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
+    /*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
 
-  //GRAPH COUNT OF VERTECIES SIMILAR TO 2*nodes_count
-  ServersGraph G(2 * nodes_count + 1);
+    lemon::SmartDigraph::ArcMap <double> costMap(ServersGraph);
+    lemon::SmartDigraph::NodeMap <std::string> nodeMap(ServersGraph);
 
-  //counter to indexing G
-  unsigned it_graph = 0;
+    //typedef std::unordered_map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
+    std::map <std::string, int> nodes;
 
-  //iterate over table data to translate servers nodes to vertecies and edges
-  for (auto &it_table_data : table_of_pathes)
-  {
+    unsigned long g_idx = 0;
+
+    for (auto &it_table_data : table_of_pathes)
+    {
+        auto path_node = it_table_data.second;
+
+        for (auto &s_node : path_node)
+        {
+            //minimal translation, because initial structure have only adjency data
+            //not information about sequence of nodes as set
+            if (nodes.count(s_node.first) == 0)
+            {
+                nodes.emplace(std::make_pair(s_node.first, g_idx));
+            }
+            
+            if (nodes.count(s_node.second) == 0)
+            {
+                nodes.emplace(std::make_pair(s_node.second, g_idx));
+            }
+                                            
+            ++g_idx;
+        }
+    }
+
+    std::vector<Arc> arcs;
+    for (auto &it_table_data : table_of_pathes)
+    {
       auto path_node = it_table_data.second;
 
       //fill each edge (k) with first vertex (i) and second (i + 1)
       //and assign to the current edge weight, that was generated
       for (auto &s_node : path_node)
       {
-          //add vertex name (i) - server name
-          G[it_graph].server_name = s_node.first;
-
-          //add vertex (i) with it's key
-          G[it_graph].server_key = it_table_data.first;
-
-          //add vertex (i) to graph G
-          auto v1 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
-
-          //increase iterator of vertecies
-          ++it_graph;
-
-          //add vertex name (i + 1) - server name
-          G[it_graph].server_name = s_node.second;
-
-          //add vertex (i + 1) with it's key
-          G[it_graph].server_key = it_table_data.first;
-
-          auto v2 = boost::add_vertex({ G[it_graph].server_name, G[it_graph].server_key }, G);
-
-          ////add vertex (i + 1) to graph G
-          auto e = boost::add_edge(v1, v2, G).first;
-
-          //add edge name of current edge (k) to graph G
-          G[e].edge_name = "QKD";
-
-          G[e].qkd_key = it_table_data.first;
-
-          //increase iterator to get next vertex to filling data
-          ++it_graph;
+          std::cout << "node: " << s_node.first << " - node: " << s_node.second << " with key = " << it_table_data.first << "\n";
+          arcs.push_back(Arc{ s_node.first, s_node.second, static_cast<double>(it_table_data.first) });
       }
-  }
-
-  /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM START-----------------------*/
-
-  typedef boost::graph_traits <ServersGraph>::vertex_descriptor Vertex;
-  std::vector <Vertex> predecessors(boost::num_vertices(G)); // store parents nodes
-
-  typedef int Weight;
-  std::vector <Weight> distances(boost::num_vertices(G)); // store distances
-
-  //[1] parameter -> graph
-  //[2] parameter -> start point (selected vertex)
-  //[3] parameter -> graph map properties
-
-  //START POINT IN DJKSTRA ALGORITHM
-  Vertex s = boost::vertex(0, G);
-
-  //create automatically propery map by boost iterator
-  //https://svn.boost.org/trac10/changeset/82439
-  boost::dijkstra_shortest_paths(G, s, 
-      boost::predecessor_map(boost::make_iterator_property_map(predecessors.begin(), boost::get(boost::vertex_index, G)))
-      .distance_map(boost::make_iterator_property_map(distances.begin(), boost::get(boost::vertex_index, G))));
-
-  /*--------------------------FIND SHORTEST PATH BY DJKSTRA ALGORITHM END-----------------------*/
-
-  std::stringstream graph_stream;
-  graph_stream << "digraph D {\n"
-      << "  rankdir=LR\n"
-      << "  size=\"4,3\"\n"
-      << "  ratio=\"fill\"\n"
-      << "  edge[dir=\"none\", style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
-
-  boost::graph_traits <ServersGraph>::edge_iterator ei, ei_end;
-
-  using VD = ServersGraph::vertex_descriptor;
-
-  VD start_vertex = boost::num_vertices(G);
-  VD end_vertex = boost::num_vertices(G);
-
-  auto predmap = predecessors.data(); // interior properties: boost::get(boost::vertex_predecessor, g);
-  auto distmap = distances.data();
-
-  size_t distance = distmap[end_vertex];
-
-  if (distance != size_t(-1))
-  {
-    std::deque<VD> path;
-
-    for (VD current = end_vertex; current != G.null_vertex() && predmap[current] != current && current != start_vertex;)
-    {
-      path.emplace_front(predmap[current]);
-
-      std::cout << "distance: " << distance << "\n";
-
-      current = predmap[current];
     }
-    std::copy(path.begin(), path.end(), std::ostream_iterator<VD>(std::cout, ", "));
-  }
 
-  std::vector <ServersGraph::vertex_descriptor> pr_map(boost::num_vertices(G));
-  std::vector <double> dist_map(boost::num_vertices(G));
+    //defining the type of the Dijkstra Class
+    using SptSolver = lemon::Dijkstra<lemon::SmartDigraph, lemon::SmartDigraph::ArcMap<double>>;
 
-  graphPayload actual_pathes;
-  std::vector <std::pair <std::string, std::string>> _buf_pairs;
+    //populate graph
+    //nodes first
+    lemon::SmartDigraph::Node currentNode;
+    for (auto nodesIter = nodes.begin(); nodesIter != nodes.end(); ++nodesIter)
+    {
+        std::string key = nodesIter->first;
+        currentNode = ServersGraph.addNode();
+        nodeMap[currentNode] = key;
+    }
 
-  //print out path table and store it to .dot file
-  for (std::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
-  {
-    boost::graph_traits <ServersGraph>::edge_descriptor e = *ei;
-    boost::graph_traits <ServersGraph>::vertex_descriptor u = boost::source(e, G), v = boost::target(e, G);
+    //then the arcs with the costs through the cost map
+    lemon::SmartDigraph::Arc currentArc;
+    for (auto arcsIter = arcs.begin(); arcsIter != arcs.end(); ++arcsIter)
+    {
+        int sourceIndex = nodes.at(arcsIter->sourceID);
+        int targetIndex = nodes.at(arcsIter->targetID);
 
-    //store all finded pathes to public map
-    _buf_pairs.emplace_back(std::make_pair(G[u].server_name, G[v].server_name));
-    actual_pathes.insert({ G[e].qkd_key, _buf_pairs });
+        lemon::SmartDigraph::Node sourceNode = ServersGraph.nodeFromId(sourceIndex);
+        lemon::SmartDigraph::Node targetNode = ServersGraph.nodeFromId(targetIndex);
 
-    //write into stringstream evaluated data as graphviz syntax string
-    graph_stream << G[u].server_name << " -> " << G[v].server_name << "[label=\"" << G[e].qkd_key << "\"";
+        currentArc = ServersGraph.addArc(sourceNode, targetNode);
+        costMap[currentArc] = arcsIter->cost;
+    }
 
-    if (predecessors[v] == u)
-        graph_stream << ", color=\"black\"";
-    else
-        graph_stream << ", color=\"blue\"";
+    std::stringstream graph_stream;
+    graph_stream << "digraph D {\n"
+        << "  rankdir=LR\n"
+        << "  size=\"4,3\"\n"
+        << "  ratio=\"fill\"\n"
+        << "  edge[dir=\"none\", style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-    graph_stream << "]";
-  }
+    for (auto p = arcs.begin(); p != arcs.end(); p++)
+    {
+        graph_stream << p->sourceID << " -> " << p->targetID << "[label=\"" << p->cost << "\"";
 
-  graph_stream << "}";
-  graph_data = graph_stream.str();//str holds the content of the file
+        if (p->sourceID == p->targetID)
+            graph_stream << ", color=\"black\"";
+        else
+            graph_stream << ", color=\"blue\"";
 
-  /*--------------------------GRAPH SHORTEST PATH FIND END-----------------------*/
+        graph_stream << "]";
+    }
 
+    graph_stream << "}";
+    std::cout << "Final serialization in sstream: \n" << graph_stream.str() << "\n";
+
+    const std::string start_point = nodes.begin()->first;
+    const std::string target_point = nodes.rbegin()->first;
+
+    //add source & target
+    lemon::SmartDigraph::Node startN = ServersGraph.nodeFromId(nodes.at(start_point));
+    lemon::SmartDigraph::Node endN = ServersGraph.nodeFromId(nodes.at(target_point));
+
+    SptSolver spt(ServersGraph, costMap);
+    spt.run(startN, endN);
+
+    /* Walk in whole SPT is possible from specified orig and end
+       but dest must be part of the SPT and
+       an orig node must not be a dest node */
+    std::vector<lemon::SmartDigraph::Node> path;
+    path.reserve(nodes.size());
+    path.resize(nodes.size());
+    for (lemon::SmartDigraph::Node v = endN; v != startN; v = spt.predNode(v))
+    {
+        if (v != lemon::INVALID && spt.reached(v)) //special LEMON node constant
+        {
+            path.push_back(v);
+        }
+    }
+
+    path.push_back(startN);
+
+    double cost = spt.dist(endN);
+
+    //print out the path with reverse iterator
+    std::cout << "Shortest Path from " << "A" << " to " << "E" << " is: " << std::endl;
+    for (auto p = path.rbegin(); p != path.rend(); ++p)
+    {
+        std::cout << nodeMap[*p] << " " << spt.dist(*p) << std::endl;
+        std::cout << "|" << " " << " " << std::endl;
+        std::cout << "v" << " " << " " << std::endl;
+    }
+
+    std::cout << "\nTotal cost for the shortest path is: " << cost << std::endl;
+
+    graph_data = graph_stream.str();
 }
 
 const graphPayload GraphMapper::get_actual_table()

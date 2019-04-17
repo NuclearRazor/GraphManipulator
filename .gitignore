@@ -1,5 +1,6 @@
 
 build_mvs_release
+lemon/build
 bin
 src/\.vs/
 

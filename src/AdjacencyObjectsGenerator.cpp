@@ -15,6 +15,9 @@ AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
 
 graphPayload AdjacencyObjectsGenerator::generate_data()
 {
+
+  overall_adjency_matrix_dimension = overall_adjency_matrix_dimension * (overall_adjency_matrix_dimension - 1) / 2;
+
   //generate random metrics
   auto generate_metric = [&]()
   {
@@ -53,7 +56,7 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   std::vector <std::string> servers_names;
 
   /*---------------------------ADD SERVERS START-----------------------------*/
-  for (unsigned int n = 0; n < this->overall_adjency_matrix_dimension; n++)
+  for (unsigned int n = 0; n < overall_adjency_matrix_dimension; n++)
   {
     servers_names.emplace_back(generate_names()); //push random name
   }
@@ -61,21 +64,32 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   //pair them up
   std::vector < std::pair <std::string, std::string> > ps;
 
-  //generate adjacency table
-  //if i == j (node A and node B are connected)
+  bool _check = false;
+
   for (auto &it_i : servers_names)
   {
     std::pair <std::string, std::string> _generated_nodes;
     for (auto &it_j : servers_names)
     {
-      if (it_i != it_j)
-      {
-        if (std::rand()%2 == 1)
+        if (it_i != it_j) //check if pair no in vector
         {
-          _generated_nodes = std::make_pair(it_i, it_j);
-          ps.emplace_back(_generated_nodes);
+            std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
+
+            _check = false;
+            for (auto it = ps.begin(); it != ps.end(); it++) 
+            {
+                if (it->first == _temp.first && it->second == _temp.second || 
+                    it->first == _temp.second && it->second == _temp.first)
+                {
+                    _check = true;
+                    break;
+                }
+            }
+
+            if (!_check)
+                ps.emplace_back(_temp);
+
         }
-      }
     }
   }
 
@@ -83,7 +97,7 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   //create set
   std::set <std::pair <std::string, std::string>> unique_set;
 
-  //get vector size fof adjacency nodes pairs
+  //get adjacency nodes pairs vector size 
   const size_t size = ps.size();
 
   //add elements of nodes to new set

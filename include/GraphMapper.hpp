@@ -3,18 +3,10 @@
 
 #define BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
 
-#include <boost/config.hpp>
-#include <boost/range/adaptor/sliced.hpp>
-#include <boost/range/adaptor/strided.hpp>
-#include <boost/range/algorithm/transform.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <boost/graph/properties.hpp>
-#include <boost/property_map/property_map.hpp>
-#include <boost/graph/named_function_params.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include "lemon/smart_graph.h"
+#include "lemon/dijkstra.h"
 
+#include <set>
 #include <utility>
 #include <iostream>
 #include <string>
@@ -42,28 +34,28 @@ class GraphMapper final
 {
 public:
 
-  //Vertex data structure
-  struct VertexData
+  ////Vertex data structure
+  //struct VertexData
+  //{
+  //  std::string server_name;
+  //  int server_key;
+  //};
+
+  ////edges data structure
+  //struct EdgeData
+  //{
+  //  std::string edge_name;
+  //  int qkd_key;
+  //};
+
+  struct Arc
   {
-    std::string server_name;
-    int server_key;
+      std::string sourceID;
+      std::string targetID;
+      double cost;
   };
 
-  //edges data structure
-  struct EdgeData
-  {
-    std::string edge_name;
-    int qkd_key;
-  };
-
-  //Servers graph
-  typedef boost::adjacency_list<
-    boost::vecS,
-    boost::vecS,
-    boost::directedS, //undirected graph
-    VertexData, //storage mechanism to store vertex properties
-    boost::property<boost::edge_weight_t, int, EdgeData> //boost::property<boost::edge_weight_t, int>
-  > ServersGraph;
+  lemon::SmartDigraph ServersGraph;
 
   GraphMapper() = default;
   ~GraphMapper() = default;
