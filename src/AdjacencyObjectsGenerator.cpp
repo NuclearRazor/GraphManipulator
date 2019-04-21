@@ -73,22 +73,38 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
     {
         if (it_i != it_j) //check if pair no in vector
         {
-            std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
 
-            _check = false;
-            for (auto it = ps.begin(); it != ps.end(); it++) 
+            for (auto &it_i : servers_names)
             {
-                if (it->first == _temp.first && it->second == _temp.second || 
-                    it->first == _temp.second && it->second == _temp.first)
+                std::pair <std::string, std::string> _generated_nodes;
+                for (auto &it_j : servers_names)
                 {
-                    _check = true;
-                    break;
+                    if (it_i != it_j)
+                    {
+                        if (std::rand() % 2 == 1)
+                        {
+                            _generated_nodes = std::make_pair(it_i, it_j);
+                            ps.emplace_back(_generated_nodes);
+                        }
+                    }
                 }
             }
 
-            if (!_check)
-                ps.emplace_back(_temp);
+            //non final
+            //std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
+            //_check = false;
+            //for (auto it = ps.begin(); it != ps.end(); it++) 
+            //{
+            //    if (it->first == _temp.first && it->second == _temp.second || 
+            //        it->first == _temp.second && it->second == _temp.first)
+            //    {
+            //        _check = true;
+            //        break;
+            //    }
+            //}
 
+            //if (!_check)
+            //    ps.emplace_back(_temp);
         }
     }
   }

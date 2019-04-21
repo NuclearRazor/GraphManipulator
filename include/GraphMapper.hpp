@@ -34,20 +34,6 @@ class GraphMapper final
 {
 public:
 
-  ////Vertex data structure
-  //struct VertexData
-  //{
-  //  std::string server_name;
-  //  int server_key;
-  //};
-
-  ////edges data structure
-  //struct EdgeData
-  //{
-  //  std::string edge_name;
-  //  int qkd_key;
-  //};
-
   struct Arc
   {
       std::string sourceID;
@@ -55,7 +41,7 @@ public:
       double cost;
   };
 
-  lemon::SmartDigraph ServersGraph;
+  lemon::ListGraph ServersGraph;
 
   GraphMapper() = default;
   ~GraphMapper() = default;

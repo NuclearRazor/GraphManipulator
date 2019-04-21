@@ -39,3 +39,4 @@ SET(BASEPATH "${CMAKE_SOURCE_DIR}")
 include_directories(${_HEADERS} ${BASEPATH} ${PROJECT_SOURCE_DIR} ${_LIBS})
 add_executable(${EXECUTABLE} ${MAIN_FILE})
 target_link_libraries(${PROJECT_NAME} ${_LIBS})
+#cmake -DCMAKE_BUILD_TYPE=release cmake -G "Visual Studio 15 2017 Win64" ..
