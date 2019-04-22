@@ -14,17 +14,13 @@ GraphMapper::GraphMapper(const graphPayload &&servers_data)
 
 void GraphMapper::get_shortest_path()
 {
-
     /*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
 
     lemon::ListGraph::EdgeMap <double> costMap(ServersGraph);
     lemon::ListGraph::NodeMap <std::string> nodeMap(ServersGraph);
 
-    typedef std::unordered_map <int, std::vector <std::pair <std::string, std::string>>> graphPayload;
     std::map <std::string, int> nodes;
-
     unsigned long g_idx = 0;
-
     for (auto &it_table_data : table_of_pathes)
     {
         auto path_node = it_table_data.second;
@@ -61,32 +57,13 @@ void GraphMapper::get_shortest_path()
       }
     }
 
-    //initialization test
-    //std::map< std::string, int > nodes = { std::make_pair("A",0),
-    //                                 std::make_pair("B",1),
-    //                                 std::make_pair("C",2),
-    //                                 std::make_pair("D",3),
-    //                                 std::make_pair("E",4)
-    //};
-
-    //std::vector<Arc> arcs = { Arc {"A","B",4},
-    //                        Arc {"A","C",2},
-    //                        Arc {"B","D",10},
-    //                        Arc {"B","C",5},
-    //                        Arc {"C","E",3},
-    //                        Arc {"E","D",4}
-    //};
-
-    //defining the type of the Dijkstra Class
-    using SptSolver = lemon::Dijkstra<lemon::ListGraph, lemon::ListGraph::EdgeMap<double>>;
-
     //populate graph
     //nodes first
     lemon::ListGraph::Node currentNode;
     for (auto nodesIter = nodes.begin(); nodesIter != nodes.end(); ++nodesIter)
     {
-        std::string key = nodesIter->first;
         currentNode = ServersGraph.addNode();
+        std::string key = nodesIter->first;
         nodeMap[currentNode] = key;
     }
 
@@ -112,7 +89,7 @@ void GraphMapper::get_shortest_path()
         << "  ratio=\"fill\"\n"
         << "  edge[dir=\"none\", style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-    for (auto p = arcs.begin(); p != arcs.end(); p++)
+    for (auto p = arcs.cbegin(); p != arcs.cend(); p++)
     {
         graph_stream << p->sourceID << " -> " << p->targetID << "[label=\"" << p->cost << "\"";
 
@@ -137,6 +114,8 @@ void GraphMapper::get_shortest_path()
     lemon::ListGraph::Node startN = ServersGraph.nodeFromId(nodes.at(start_point));
     lemon::ListGraph::Node endN = ServersGraph.nodeFromId(nodes.at(target_point));
 
+    //defining the type of the Dijkstra Class
+    using SptSolver = lemon::Dijkstra<lemon::ListGraph, lemon::ListGraph::EdgeMap<double>>;
     SptSolver spt(ServersGraph, costMap);
     spt.run(startN, endN);
 
@@ -147,8 +126,6 @@ void GraphMapper::get_shortest_path()
 
     for (lemon::ListGraph::Node v = endN; v != startN; v = spt.predNode(v))
     {
-        std::cout << "ID = " << ServersGraph.id(v) << "\n";
-
         if (v != lemon::INVALID && spt.reached(v)) //special LEMON node constant
         {
             path.push_back(v);
@@ -165,6 +142,7 @@ void GraphMapper::get_shortest_path()
     for (auto p = path.rbegin(); p != path.rend(); ++p)
     {
         std::cout << nodeMap[*p] << " " << spt.dist(*p) << std::endl;
+        std::cout << "^" << " " << " " << std::endl;
         std::cout << "|" << " " << " " << std::endl;
         std::cout << "v" << " " << " " << std::endl;
     }

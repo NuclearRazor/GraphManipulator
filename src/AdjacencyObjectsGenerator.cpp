@@ -15,9 +15,6 @@ AdjacencyObjectsGenerator::AdjacencyObjectsGenerator(
 
 graphPayload AdjacencyObjectsGenerator::generate_data()
 {
-
-  overall_adjency_matrix_dimension = overall_adjency_matrix_dimension * (overall_adjency_matrix_dimension - 1) / 2;
-
   //generate random metrics
   auto generate_metric = [&]()
   {
@@ -74,67 +71,40 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
         if (it_i != it_j) //check if pair no in vector
         {
 
-            for (auto &it_i : servers_names)
+            std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
+
+            _check = false;
+            for (auto it = ps.begin(); it != ps.end(); it++)
             {
-                std::pair <std::string, std::string> _generated_nodes;
-                for (auto &it_j : servers_names)
+                if (it->first == _temp.first && it->second == _temp.second ||
+                    it->first == _temp.second && it->second == _temp.first)
                 {
-                    if (it_i != it_j)
-                    {
-                        if (std::rand() % 2 == 1)
-                        {
-                            _generated_nodes = std::make_pair(it_i, it_j);
-                            ps.emplace_back(_generated_nodes);
-                        }
-                    }
+                    _check = true;
+                    break;
                 }
             }
 
-            //non final
-            //std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
-            //_check = false;
-            //for (auto it = ps.begin(); it != ps.end(); it++) 
-            //{
-            //    if (it->first == _temp.first && it->second == _temp.second || 
-            //        it->first == _temp.second && it->second == _temp.first)
-            //    {
-            //        _check = true;
-            //        break;
-            //    }
-            //}
+            if (!_check)
+                ps.emplace_back(_temp);
 
-            //if (!_check)
-            //    ps.emplace_back(_temp);
         }
     }
   }
 
   /*-----------------------------ADD SERVERS END------------------------------*/
-  //create set
-  std::set <std::pair <std::string, std::string>> unique_set;
 
-  //get adjacency nodes pairs vector size 
-  const size_t size = ps.size();
-
-  //add elements of nodes to new set
-  for (unsigned i = 0; i < size; ++i) unique_set.emplace(ps[i]);
-
-  //replace elements with unique nodes to vector
-  ps.assign(unique_set.begin(), unique_set.end());
   /*--------------------GENERATE KEY FOR EACH NODE/PAIR START------------------*/
 
-  std::pair <std::string, std::string>  servers_pair;
   graphPayload servers_data;
-
   for (auto &s_node : ps)
   {
     servers_data[generate_metric()].emplace_back(s_node);
   }
 
   /*--------------------GENERATE KEY FOR EACH NODE/PAIR END----------------------*/
+
   return servers_data;
 }
-
 
 graphPayload AdjacencyObjectsGenerator::get_adjency_objects()
 {
