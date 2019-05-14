@@ -63,10 +63,10 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
 
   bool _check = false;
 
-  for (auto &it_i : servers_names)
+  for (const auto &it_i : servers_names)
   {
     std::pair <std::string, std::string> _generated_nodes;
-    for (auto &it_j : servers_names)
+    for (const auto &it_j : servers_names)
     {
         if (it_i != it_j) //check if pair no in vector
         {
@@ -74,7 +74,7 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
             std::pair <std::string, std::string> _temp = std::make_pair(it_i, it_j);
 
             _check = false;
-            for (auto it = ps.begin(); it != ps.end(); it++)
+            for (auto it = ps.cbegin(); it != ps.cend(); it++)
             {
                 if (it->first == _temp.first && it->second == _temp.second ||
                     it->first == _temp.second && it->second == _temp.first)
@@ -96,7 +96,7 @@ graphPayload AdjacencyObjectsGenerator::generate_data()
   /*--------------------GENERATE KEY FOR EACH NODE/PAIR START------------------*/
 
   graphPayload servers_data;
-  for (auto &s_node : ps)
+  for (const auto &s_node : ps)
   {
     servers_data[generate_metric()].emplace_back(s_node);
   }

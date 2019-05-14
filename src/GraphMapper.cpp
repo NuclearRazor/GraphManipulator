@@ -12,6 +12,9 @@ GraphMapper::GraphMapper(const graphPayload &&servers_data)
   nodes_count = servers_data.size();
 }
 
+//TODO
+//think about parts of processing data
+//what data look most of all
 void GraphMapper::get_shortest_path()
 {
     /*--------------------------GRAPH SHORTEST PATH FIND START-----------------------*/
@@ -45,15 +48,15 @@ void GraphMapper::get_shortest_path()
     }
 
     std::vector<Arc> arcs;
-    for (auto &it_table_data : table_of_pathes)
+    for (const auto &it_table_data : table_of_pathes)
     {
       auto path_node = it_table_data.second;
       //fill each edge (k) with first vertex (i) and second (i + 1)
       //and assign to the current edge weight, that was generated
-      for (auto &s_node : path_node)
+      for (const auto &s_node : path_node)
       {
           std::cout << "node: " << s_node.first << " - node: " << s_node.second << " with key = " << it_table_data.first << "\n";
-          arcs.push_back(Arc{ s_node.first, s_node.second, static_cast<double>(it_table_data.first) });
+          arcs.emplace_back(Arc{ s_node.first, s_node.second, static_cast<double>(it_table_data.first) });
       }
     }
 
@@ -104,6 +107,8 @@ void GraphMapper::get_shortest_path()
     graph_stream << "}";
     std::cout << "Final serialization in sstream: \n" << graph_stream.str() << "\n";
 
+    //TODO
+    //must be wrapped and filled by client middlestone
     const std::string start_point = nodes.begin()->first;
     const std::string target_point = nodes.rbegin()->first;
 
@@ -128,11 +133,11 @@ void GraphMapper::get_shortest_path()
     {
         if (v != lemon::INVALID && spt.reached(v)) //special LEMON node constant
         {
-            path.push_back(v);
+            path.emplace_back(v);
         }
     }
 
-    path.push_back(startN);
+    path.emplace_back(startN);
 
     double cost = spt.dist(endN);
 

@@ -42,6 +42,10 @@ WSServer::WSServer(const unsigned int port)
 
 }
 
+//TODO
+//wrapper for onmessage
+//json -> wrapper -> case_i for onmessage
+
 //update payload of graph parameters
 //set parameters of graph as int values into vector of int's
 void WSServer::update_payload(const char* const message, size_t length)
