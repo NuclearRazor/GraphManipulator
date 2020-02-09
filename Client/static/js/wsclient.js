@@ -86,11 +86,11 @@ function openWSConnection(protocol, hostname, port, endpoint)
 
             if (wsMsg.indexOf("error") > 0)
             {
-                document.getElementById("incomingMsgOutput").value += "\nERROR: " + wsMsg.error + "\r\n";
+                document.getElementById("dataOutput").value += "\nERROR: " + wsMsg.error + "\r\n";
             }
             else
             {
-                document.getElementById("incomingMsgOutput").value += "\nINFO:\n\n" + wsMsg + "\r\n";
+                document.getElementById("dataOutput").value += "\nINFO:\n\n" + wsMsg + "\r\n";
 
                 data = wsMsg;
                 window.onload = render_graph();
@@ -172,16 +172,28 @@ function onPlotClick(element)
         console.log('MATRIX DIM: ', matrix_dim);
         console.log('CHARACTERS LEN: ', characters_length);
         console.log('METRICS: ', metrics);
+		
+		var payload = {
+						"type": "graph_object",
+						"data": {
+						  "config":
+						  {
+							"matrix_dim": matrix_dim,
+							"characters_length": characters_length,
+							"metrics_dim": metrics
+						  }
+						},
+						"ok": "true"
+					  };
+		
+		json_payload = JSON.stringify(payload);
+		
+        console.log('STRING PAYLOAD IN SEND EVENT: ', json_payload);
+		
+		document.getElementById("dataSend").value = json_payload;
 
-        var payload = '{"matrix_dim": ' + matrix_dim +
-                      ', "characters_length": ' + characters_length +
-                      ', "metrics": ' + metrics + '}';
-
-        console.log('STRING PAYLOAD IN SEND EVENT: ', payload);
-
-        webSocket.send(payload);
+        webSocket.send(json_payload);
 
         update_cursor(element);
-
     }
 }

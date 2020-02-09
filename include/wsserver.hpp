@@ -3,31 +3,48 @@
 
 #include <uWS.h>
 #include <json.hpp>
-
-#include <atomic>
-#include <memory>
-#include <thread>
-#include <mutex>
+#include <iostream>
 #include <future>
+#include <mutex>
+#include <thread>
 
-class WSServer final
-{
+static nlohmann::json actual_payload{};
+
+class WSServerObserver final {
+
+  nlohmann::json o_payload;
+
 public:
-  explicit WSServer(const unsigned int port);
+  WSServerObserver() = default;
+  WSServerObserver(WSServerObserver &&) = delete;
+  WSServerObserver(const WSServerObserver&) = delete;
+  WSServerObserver& operator=(const WSServerObserver&) = delete;
+  ~WSServerObserver() = default;
+
+  void update(const nlohmann::json&& payload);
+  nlohmann::json get_payload();
+};
+
+
+class WSServer final{
+
+  std::string graph_data{};
+  uWS::Hub h;
+  WSServerObserver payload_observer;
+
+public:
+  explicit WSServer(unsigned int port);
   WSServer(WSServer &&) = delete;
   WSServer(const WSServer&) = delete;
   WSServer& operator=(const WSServer&) = delete;
  ~WSServer() = default;
 
   void update_payload(const char* const message, size_t length);
+  void dump_payload(const char* const message, size_t length);
+
   void call_graph_mapper();
 
-private:
-  std::vector <int> payload_data;
-  typedef nlohmann::json::const_iterator msg_it;
-  typedef std::vector <int>::iterator payload_it;
-  std::string graph_data;
-  GraphProcessor* task_process;
+  void notify();
 };
 
 #endif //WSSERVER_HPP

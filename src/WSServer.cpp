@@ -3,85 +3,64 @@
 
 #include <wsserver.hpp>
 
-WSServer::WSServer(const unsigned int port)
-{
-  uWS::Hub h;
+WSServer::WSServer(unsigned int port){
 
-  //listen port 
-  if (h.listen(port))
-  {
-    std::cout << "Listening to port " << port << "\n";
+  if (h.listen(port)){
+    std::cout << "Listening to port: " << port << "\n";
 
-    //uWs Hub istance process on each current callable for weboskcet instance
-    //process on items by lambdas
-    h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode)
-    {
+    h.onMessage([&](uWS::WebSocket<uWS::SERVER> *ws, char *msg, size_t length, uWS::OpCode opCode) {
       update_payload(msg, length);
       ws->send(graph_data.c_str(), graph_data.length(), opCode);
     });
 
-    //process on message
-    h.onConnection([&](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req)
-    {
-      std::cout << "Connected!" << std::endl;
+    h.onConnection([&](uWS::WebSocket<uWS::SERVER> *ws, uWS::HttpRequest req){
+      std::cout << "\nConnected!\n";
     });
 
-    //close weboskcet connection
-    h.onDisconnection([&](uWS::WebSocket<uWS::SERVER> *ws, int code, char *msg, size_t length)
-    {
+    h.onDisconnection([&](uWS::WebSocket<uWS::SERVER> *ws, int code, char *msg, size_t length){
       ws->close();
-      std::cout << "Disconnected!" << "\n";
+      std::cout << "\nDisconnected!\n";
     });
   }
-  else
-  {
-    std::cerr << "Failed to listen to port" << "\n";
+  else{
+    std::cerr << "\nFailed to listen to port" << "\n";
   }
 
   h.run();
-
 }
 
-//TODO
-//wrapper for onmessage
-//json -> wrapper -> case_i for onmessage
 
-//update payload of graph parameters
-//set parameters of graph as int values into vector of int's
-void WSServer::update_payload(const char* const message, size_t length)
-{
-
-  try
-  {
-      nlohmann::json json_obj = nlohmann::json::parse(std::string(message, length));
-
-      //resize vector with 3 elements as graph options parameters
-      payload_data.reserve(json_obj.size()); //allocate
-      payload_data.resize(json_obj.size()); //make constant container size
-
-      for (std::pair<msg_it, payload_it> i(json_obj.cbegin(), payload_data.begin());
-          i.first != json_obj.end()  && i.second != payload_data.end();
-          ++i.first, ++i.second)
-      {
-          (*i.second) = (*i.first);
-      }
-
-      call_graph_mapper();
-
-  }
-  catch (...)
-  {
-      throw std::runtime_error("Cannot process on JSON");
-  }
-
+void WSServerObserver::update(const nlohmann::json&& payload) {
+  o_payload = payload;
 }
 
-//input: graph options - scalars of int's
-//output: graph as std::string object
-void WSServer::call_graph_mapper()
-{
-    std::unique_ptr<GraphProcessor> UGraphProcessorInstance = std::make_unique<GraphProcessor>();
-    graph_data = std::move(UGraphProcessorInstance->serialize_graph(std::move(payload_data)));
+
+void WSServer::dump_payload(const char* const message, size_t length) {
+  if (message)
+    actual_payload = nlohmann::json::parse(std::string(message, length));
+
+  if (actual_payload["ok"] == "true" || actual_payload["ok"])
+    std::cout << "\njson validated\n";
+
+  notify();
+}
+
+
+void WSServer::update_payload(const char* const message, size_t length){
+  try{
+    dump_payload(message, length);
+  }
+  catch (std::logic_error){
+      throw std::runtime_error("Cannot deserialize JSON data");
+  }
+  catch (...){
+      throw std::runtime_error("Unknown exception during JSON processing");
+  }
+}
+
+void WSServer::notify() {
+  std::cout << "notify";
+  payload_observer.update(std::move(actual_payload));
 }
 
 #endif //WSSERVER_CPP

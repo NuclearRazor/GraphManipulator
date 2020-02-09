@@ -19,7 +19,7 @@
     <body>
     <div class="container">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row-md-3">
                 <div class="col-md-4" align="center">
                     <table class="table">
                         <h2>MANIPULATOR</h2>
@@ -58,11 +58,18 @@
                     </table>
                     <table>
                     <tr>
-                        <textarea id="incomingMsgOutput" rows="10" cols="10" class="form-control"></textarea>
+					<h4>SEND:</h4>
+					<div class="row-md-4">
+                        <textarea id="dataSend" rows="8" cols="10" class="form-control"></textarea>
+					</div>
+					<h4>OUTPUT:</h4>
+					<div class="row-md-4">
+                        <textarea id="dataOutput" rows="8" cols="10" class="form-control"></textarea>
+					</div>
                     </tr>
                     </table>
                 </div>
-                <div class="col-md-7"  align="center">
+                <div class="col-md-8"  align="center">
                     <h2>GRAPH PLOT</h2>
                     <br>
                     <br>
