@@ -18,42 +18,55 @@
     </head>
     <body>
     <div class="container">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row-md-3">
                 <div class="col-md-4" align="center">
                     <table class="table">
                         <h2>MANIPULATOR</h2>
                     <tr>
-                        <td>VERTEX NAME LENGTH</td>
+                        <td>SUBSETS MODEL NAMES</td>
                         <td><input type="text" id="matrix_dim" class="form-control"/></td>
                     </tr>
                     <tr>
-                        <td>NODES COUNT</td>
+                        <td>SUBSETS COUNT</td>
                         <td><input type="text" id="nodes_dim" class="form-control"/></td>
                     </tr>
                     <tr>
-                        <td>EDGES WEIGHT COUNT</td>
+                        <td>SUBSET WEIGHTS COUNT</td>
                         <td><input type="text" id="metrics_dim" class="form-control"/></td>
                     </tr>
                     <tr>
-                        <td>
-                            <input style="font-weight: bold;" id="btnDisconnect" type="button" value="DISCONNECT" class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onDisconnectClick()" disabled="disabled">
-                            &nbsp;
-                            <input style="font-weight: bold;" id="btnOptions" type="button" value="OPTIONS" class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onOptionsclick()">
-                            <div class="options_panel">
-                                <table class="options_table">
-                                    <tr>
-                                        <td>PORT</td>
-                                        <td><input type="text" id="port" style="width: 120%;" class="form-control"/></td>
-                                        <td><input id="btnApplyPort" type="button" value="APPLY" onclick="onApplyPortClick()" class="btn btn-indigo btn-sm m-0 btn-primary"></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        <td>
-                        <input id="btnConnect"    type="button" value="CONNECT"   class="btn btn-indigo btn-sm m-0" onclick="onConnectClick()">
-                        &nbsp;
-                        <input id="btnPlot" type="button" value="PLOT" disabled="disabled" class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onPlotClick(document.getElementsByTagName('textarea')[0])">
-                        </td>
+                    <td>
+					<input style="font-weight: bold;" id="btnDisconnect" type="button" value="DISCONNECT" 
+					class="btn btn-indigo btn-sm m-0 btn-primary" onclick="onDisconnectClick()" disabled="disabled">
+						&nbsp;
+					<input style="font-weight: bold;" id="btnOptions" type="button" value="OPTIONS" 
+					class="btn btn-indigo btn-sm m-0 btn-primary" 
+						onclick="onOptionsclick()">
+						<div class="options_panel">
+							<table class="options_table">
+								<tr>
+									<td>PORT</td>
+									<td>
+									<input type="text" id="port" class="form-control"/>
+									</td>
+									<td>
+									<input id="btnApplyPort" type="button" value="APPLY" 
+									class="btn btn-indigo btn-sm m-0 btn-primary"
+									onclick="onApplyPortClick()">
+									</td>
+								</tr>
+							</table>
+						</div>
+					<td>
+					<input id="btnConnect" type="button" value="CONNECT" 
+					class="btn btn-indigo btn-sm m-0" 
+					onclick="onConnectClick()">
+					&nbsp;
+					<input id="btnPlot" type="button" value="PLOT" disabled="disabled" 
+					class="btn btn-indigo btn-sm m-0 btn-primary" 
+					onclick="onPlotClick(document.getElementsByTagName('textarea')[0])">
+					</td>
                     </tr>
                     </table>
                     <table>
