@@ -7,9 +7,10 @@
 class NodeEndPoint final{
 
   std::string graph_data{};
-  uWS::Hub h;
   NodeObserver* payload_observer;
-  nlohmann::json local_payload;
+  nlohmann::json loc_json{};
+
+  const unsigned int port;
 
 public:
   explicit NodeEndPoint(unsigned int port);
@@ -17,10 +18,12 @@ public:
   NodeEndPoint(const NodeEndPoint&) = delete;
   NodeEndPoint& operator=(const NodeEndPoint&) = delete;
   NodeEndPoint& operator=(const NodeEndPoint&&) = delete;
- ~NodeEndPoint() = default;
+ ~NodeEndPoint();
 
-  void update_payload(const char* const message, size_t length);
-  void dump_payload(const char* const message, size_t length);
+  void init();
+
+  void update_payload(const char* const message);
+  void dump_payload(const char* const message);
 
   void call_graph_mapper();
 

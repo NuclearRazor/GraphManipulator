@@ -2,7 +2,7 @@ var webSocket   = null;
 var ws_protocol = "ws";
 var ws_hostname = "localhost";
 var ws_port     = "";
-var ws_endpoint = "";
+var ws_endpoint = "set_mapper";
 
 var data = String();
 
@@ -47,7 +47,7 @@ function openWSConnection(protocol, hostname, port, endpoint)
 {
 
     var webSocketURL = null;
-    webSocketURL = protocol + "://" + hostname + ":" + port + endpoint;
+    webSocketURL = protocol + "://" + hostname + ":" + port + "/" + endpoint + "/";
     console.log("openWSConnection::Connecting to: " + webSocketURL);
 
     try

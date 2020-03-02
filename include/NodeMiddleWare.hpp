@@ -1,7 +1,10 @@
 #ifndef NODEMIDDLEWARE_HPP
 #define NODEMIDDLEWARE_HPP
 
-#include <uWS.h>
+#include "client_ws.hpp"
+#include "server_ws.hpp"
+
+#include <future>
 #include <json.hpp>
 #include <iostream>
 #include <future>
@@ -9,32 +12,14 @@
 #include <thread>
 #include <chrono>
 
+#include <NodeObserver.hpp>
 
-static thread_local nlohmann::json actual_payload{};
 
-
-class NodeObserver final {
-
-  nlohmann::json o_payload;
-
-public:
-  NodeObserver() = default;
-  NodeObserver(NodeObserver &&) = delete;
-  NodeObserver(const NodeObserver&) = delete;
-  NodeObserver& operator=(const NodeObserver&) = delete;
-  NodeObserver& operator=(const NodeObserver&&) = delete;
-  ~NodeObserver() = default;
-
-  void update(const nlohmann::json& payload);
-  const nlohmann::json get_payload();
-};
-
-//TODO
-//make inherited from NodeController interface
 class NodeMiddleWare final{
 
-  uWS::Hub h;
   NodeObserver* payload_observer;
+  nlohmann::json loc_json{};
+  const unsigned int port;
 
 public:
   explicit NodeMiddleWare(unsigned int port);
@@ -42,10 +27,12 @@ public:
   NodeMiddleWare(const NodeMiddleWare&) = delete;
   NodeMiddleWare& operator=(const NodeMiddleWare&) = delete;
   NodeMiddleWare& operator=(const NodeMiddleWare&&) = delete;
- ~NodeMiddleWare() = default;
+ ~NodeMiddleWare();
 
-  void update_payload(const char* const message, size_t length);
-  void dump_payload(const char* const message, size_t length);
+  void init();
+
+  void update_payload(const char* const message);
+  void dump_payload(const char* const message);
 
   void notify();
 };

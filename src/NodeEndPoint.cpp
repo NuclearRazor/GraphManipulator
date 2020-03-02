@@ -4,54 +4,82 @@
 #include <NodeEndPoint.hpp>
 
 
-NodeEndPoint::NodeEndPoint(unsigned int port){
+NodeEndPoint::NodeEndPoint(unsigned int p_port) : port(p_port){
+  init();
+}
 
-  uWS::Hub h;
+
+NodeEndPoint::~NodeEndPoint(){
+  payload_observer->~NodeObserver();
+}
+
+
+void NodeEndPoint::init(){
+
+  using WsClient = SimpleWeb::SocketClient<SimpleWeb::WS>;
+  using WsConnection = std::shared_ptr<WsClient::Connection>;
+
+  using namespace std::chrono_literals;
+
   payload_observer = new NodeObserver();
 
-  h.onPing([&](uWS::WebSocket<uWS::CLIENT> *ws, char *message, size_t length) {
-    std::cout << std::string(message, length) << std::endl;
-    //ws -> nodemiddleware
-  });
+  auto const client_endpoint = "localhost:" + std::to_string(port) + "/set_mapper/data/";
 
-  h.onMessage([&](uWS::WebSocket<uWS::CLIENT> *ws, char *message, size_t length, uWS::OpCode opCode) {
-    std::cout << std::string(message, length) << std::endl;
-    //ws->send(message, length, opCode);
-  });
+  while(true){
+    std::atomic<bool> closed(false);
+    WsClient client(client_endpoint);
 
-  h.onConnection([&](uWS::WebSocket<uWS::CLIENT> *ws, uWS::HttpRequest req) {
-    std::cout << "\nNodeEndPoint Connected!" << std::endl;
-  });
+    client.on_message = [](WsConnection connection, std::shared_ptr<WsClient::InMessage> in_message) {
+      std::cout << "NodeEndPoint: Message received: \"" << in_message->string() << std::endl;
 
-  h.onDisconnection([&](uWS::WebSocket<uWS::CLIENT> *ws, int code, char *msg, size_t length) {
-    h.getDefaultGroup<uWS::CLIENT>().close();
-    std::cout << "\nNodeEndPoint Disconnected!" << std::endl;
-  });
+      std::string out_message("{\"ok\": \"true\", \"data\": \"updated data\"}");
+      std::this_thread::sleep_for(250ms);
 
-  h.connect("ws://localhost:" + std::to_string(port), nullptr);
-  h.run();
+      connection->send(out_message);
+    };
+
+    client.on_open = [](std::shared_ptr<WsClient::Connection> connection) {
+      std::string out_message("{\"ok\": \"true\", \"message\": \"no data to redner\"}");
+      connection->send(out_message);
+    };
+
+    client.on_close = [&](WsConnection connection, int status, const std::string & reason) {
+      std::cout << "NodeEndPoint: Closed connection with status code " << status << std::endl;
+      delete payload_observer;
+      closed = true;
+    };
+
+    client.on_error = [](WsConnection connection, const SimpleWeb::error_code &ec) {
+      std::cout << "NodeEndPoint: Error: " << ec << ", error message: " << ec.message() << std::endl;
+    };
+
+    std::thread client_thread([&client]() {
+      client.start();
+    });
+
+    while(!closed)
+      std::this_thread::sleep_for(250ms);
+
+    client.stop();
+    client_thread.join();
+  }
 }
 
 
-void NodeObserver::update(const nlohmann::json& payload) {
-  o_payload = payload;
-}
-
-
-void NodeEndPoint::dump_payload(const char* const message, size_t length) {
+void NodeEndPoint::dump_payload(const char* const message) {
   if (message)
-    actual_payload = nlohmann::json::parse(std::string(message, length));
+    loc_json = nlohmann::json::parse(message);
 
-  if (actual_payload["ok"] == "true" || actual_payload["ok"])
-    std::cout << "\njson validated" << std::endl;
+  if (loc_json["ok"] == "true" || loc_json["ok"])
+    std::cout << "\njson validated" << std::endl;;
 
   notify();
 }
 
 
-void NodeEndPoint::update_payload(const char* const message, size_t length){
+void NodeEndPoint::update_payload(const char* const message){
   try{
-    dump_payload(message, length);
+    dump_payload(message);
   }
   catch (std::logic_error){
       throw std::runtime_error("Cannot deserialize JSON data");
@@ -63,7 +91,7 @@ void NodeEndPoint::update_payload(const char* const message, size_t length){
 
 
 void NodeEndPoint::notify() {
-  payload_observer->update(std::move(actual_payload));
+  payload_observer->update(std::move(loc_json));
 }
 
 #endif //NODEENDPOINT_CPP
